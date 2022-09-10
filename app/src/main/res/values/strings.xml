@@ -2,4 +2,16 @@
     <string name="app_name">FYPMock</string>
     <string name="start_navigation">Start Navigation</string>
     <string name="navigation">Navigation</string>
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="fav_poi">Favourite POIs</string>
+    <string name="view_map">View Map</string>
+    <string name="plan_route">Plan Route</string>
+    <string name="title_activity_menu">menu</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 </resources>
