@@ -7,6 +7,13 @@
     <string name="fav_poi">Favourite POIs</string>
     <string name="view_map">View Map</string>
     <string name="plan_route">Plan Route</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="Email">Email</string>
+    <string name="Password">Password</string>
+    <string name="no_account">I don\'t have an account</string>
+    <string name="have_account">I have an account</string>
     <string name="title_activity_menu">menu</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

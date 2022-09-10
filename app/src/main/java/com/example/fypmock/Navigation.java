@@ -72,8 +72,8 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
     private static final int UPDATE_LOCATION_ANIMATION_TIME = 600;
     private static final int MIN_CHANGE_IN_BEARING_TO_ANIMATE_CAMERA = 10;
 
-    private static final String FIRST_FLOOR_ID = "34489";
-    private static final String SECOND_FLOOR_ID = "34490";
+    private static final String FIRST_FLOOR_ID = "33053";
+    private static final String SECOND_FLOOR_ID = "34374";
 
     private static GoogleMap map;
     private Marker marker;
@@ -136,7 +136,6 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
         firstLocation = (Location) getIntent().getParcelableExtra("USER_LOCATION");
         selectedPoiNames = getIntent().getStringArrayListExtra("SELECTED_POIS");
-        Log.d(TAG, "selected " + selectedPoiNames);
         navDescLayout = (RelativeLayout) findViewById(R.id.nav_layout);
         mtvDirection = (TextView) findViewById(R.id.tvDirection);
         startNavBtn = findViewById(R.id.start_button);

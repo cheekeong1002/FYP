@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "162141214236",
+    "project_id": "indoor-navigation-system-faf3a",
+    "storage_bucket": "indoor-navigation-system-faf3a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162141214236:android:988fde9b540555c19971d9",
+        "android_client_info": {
+          "package_name": "com.example.fypmock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162141214236-4td0a2qa02dqq31m9mfert4cno3kcs7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1YV27IbSWmCzXcqpWCDt_ufH1ON_TKpU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162141214236-4td0a2qa02dqq31m9mfert4cno3kcs7r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

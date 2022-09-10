@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.fypmock" >
+    package="com.example.fypmock">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -10,24 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity
-            android:name=".Menu"
-            android:label="@string/title_activity_menu"
-            android:theme="@style/AppTheme.NoActionBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Test2"
-            android:parentActivityName=".Test" >
-        </activity>
-        <activity android:name=".Test" >
-
-        </activity>
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -40,24 +23,50 @@
             android:value="791bb3e3a8856145aed74aae9e138e8c1d45289fe7584b63c60ae60802c426c1" />
 
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme" >
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".Menu"
+            android:label="@string/title_activity_menu"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+
+        <activity
+            android:name=".Test2"
+            android:parentActivityName=".Test" />
+        <activity android:name=".Test" />
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".PositioningActivity"
             android:parentActivityName=".Test"
-            android:theme="@style/AppTheme" >
-        </activity>
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".Map"
             android:label="Map"
-            android:parentActivityName=".Test" >
-        </activity>
+            android:parentActivityName=".Test" />
+
         <activity
             android:name=".Navigation"
             android:label="AnimatePositionActivity"
-            android:parentActivityName=".Test" >
-        </activity>
+            android:parentActivityName=".Test" />
     </application>
 
 </manifest>
