@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        tools:context=".Map" />
+
+    <RelativeLayout
+        android:visibility="gone"
+        android:id="@+id/nav_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/nav_layout_bg"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/tvDirection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
+            android:textSize="15sp"
+            android:text="@string/navigation"
+            android:fontFamily="@font/poppins_regular"/>
+    </RelativeLayout>
+
+    <ProgressBar
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="84dp"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/situm_level_list_margin_bottom_in_calibration"
+        android:layout_marginStart="@dimen/situm_level_list_margin_start_in_animation">
+
+        <com.example.fypmock.FloorSelectorView
+            android:id="@+id/situm_floor_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_navigation"
+            android:background="@drawable/default_button_bg"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins_regular"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        app:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/positioning"/>
+
+</RelativeLayout>
