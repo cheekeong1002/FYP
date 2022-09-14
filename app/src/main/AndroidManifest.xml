@@ -11,6 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".DisplayPoiOrder"></activity>
+        <activity android:name=".AddPoi"
+            android:label="@string/addPoi"
+            android:parentActivityName=".Test"/>
+
+        <activity
+            android:name=".SelectPoi"
+            android:label="@string/plan_route"
+            android:parentActivityName=".SelectPoi" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -31,38 +40,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".RegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Test2"
             android:parentActivityName=".Test" />
         <activity android:name=".Test" />
-
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".PositioningActivity"
             android:parentActivityName=".Test"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".Map"
             android:label="Map"
             android:parentActivityName=".Test" />
-
         <activity
             android:name=".Navigation"
             android:label="AnimatePositionActivity"

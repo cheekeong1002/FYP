@@ -46,11 +46,11 @@ public class Test extends GetBuildingID{
 
         locationManager = SitumSdk.locationManager();
 
-        selectedPois.add("room2");
-        selectedPois.add("room3");
-//        selectedPois.add("KFC");
-//        selectedPois.add("Kyo Chon");
-//        selectedPois.add("Age's Ago");
+        //selectedPois.add("room2");
+        //selectedPois.add("room3");
+        selectedPois.add("KFC");
+        selectedPois.add("Kyo Chon");
+        selectedPois.add("Age's Ago");
     }
 
     @Override

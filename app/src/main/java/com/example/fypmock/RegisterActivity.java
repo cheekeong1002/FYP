@@ -121,7 +121,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         mProgressBar.setVisibility(View.GONE);
                                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
-                                        Toast.makeText(RegisterActivity.this, "Success! Please login to the new account!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(RegisterActivity.this, "Successfully created an account!", Toast.LENGTH_LONG).show();
                                     }else{
                                         Toast.makeText(RegisterActivity.this, "Failed to register an account!", Toast.LENGTH_LONG).show();
                                         mProgressBar.setVisibility(View.GONE);

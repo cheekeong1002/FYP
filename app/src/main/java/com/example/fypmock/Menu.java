@@ -30,6 +30,8 @@ import androidx.preference.PreferenceManager;
 
 public class Menu extends AppCompatActivity {
 
+    FirebaseAuth mAuth;
+
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseUser user;
     private DatabaseReference ref;
@@ -40,7 +42,16 @@ public class Menu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        mAuth = FirebaseAuth.getInstance();
+
+        if (mAuth.getCurrentUser() == null){
+            Intent intent = new Intent(Menu.this, LoginActivity.class);
+            startActivity(intent);
+            Toast.makeText(this, "Please login to continue!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        user = mAuth.getCurrentUser();
         ref = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
 
@@ -82,20 +93,23 @@ public class Menu extends AppCompatActivity {
                 Intent intent;
 
                 switch (item.toString()){
+                    case "Profile":
+                        intent = new Intent(Menu.this, Test.class);
+                        startActivity(intent);
+                        break;
+
                     case "View Map":
                         intent = new Intent(Menu.this, Map.class);
                         startActivity(intent);
                         break;
 
                     case "Plan Route":
-                        intent = new Intent(Menu.this, Test.class);
+                        intent = new Intent(Menu.this, SelectPoi.class);
                         startActivity(intent);
                         break;
 
                     case "Logout":
-                        FirebaseAuth.getInstance().signOut();
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(Menu.this);
-                        prefs.edit().putBoolean("IsLogin", false).apply();
+                        mAuth.signOut();
 
                         intent = new Intent(Menu.this, LoginActivity.class);
                         startActivity(intent);

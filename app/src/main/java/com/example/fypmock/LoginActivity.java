@@ -33,15 +33,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-        boolean isLogin = pref.getBoolean("IsLogin", false);
+        mAuth = FirebaseAuth.getInstance();
 
-        if (isLogin){
+        if (mAuth.getCurrentUser() != null){
             Intent intent = new Intent(LoginActivity.this, Menu.class);
             startActivity(intent);
         }
-
-        mAuth = FirebaseAuth.getInstance();
 
         mtv_toRegister = findViewById(R.id.tv_toRegister);
         mtv_toRegister.setOnClickListener(this);
@@ -105,8 +102,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     Intent intent = new Intent(LoginActivity.this, Menu.class);
                     startActivity(intent);
+                    mProgressBar.setVisibility(View.GONE);
                 }else{
                     Toast.makeText(LoginActivity.this, "Failed to login! Check your credentials!", Toast.LENGTH_LONG).show();
+                    mProgressBar.setVisibility(View.GONE);
                 }
             }
         });
