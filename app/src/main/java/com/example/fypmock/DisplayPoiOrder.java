@@ -48,10 +48,10 @@ public class DisplayPoiOrder extends GetBuildingID {
 
         ArrayList<String> selectedPoiList = new ArrayList<>();
         selectedPoiList.add("Vivo");
-//        selectedPoiList.add("KFC");
-//        selectedPoiList.add("Ippudo");
-//        selectedPoiList.add("Kim Gary");
-//        selectedPoiList.add("Sushi Tei");
+        selectedPoiList.add("KFC");
+        selectedPoiList.add("Ippudo");
+        selectedPoiList.add("Kim Gary");
+        selectedPoiList.add("Sushi Tei");
 
         getAllCombinations(selectedPoiList, 0);
         setPoiOfBuilding();

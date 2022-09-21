@@ -35,9 +35,11 @@ import java.util.List;
 
 public class FavouriteFragment extends Fragment {
 
-    FirebaseDatabase f;
+    FirebaseDatabase mDatabase;
+    FirebaseAuth mAuth;
 
     private FavPoiListAdapter adapter;
+    private ArrayList<String> data = new ArrayList<>();
     private ArrayList<String> favPoiList = new ArrayList<>();
     private ListView mlv_fav;
 
@@ -53,6 +55,8 @@ public class FavouriteFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mlv_fav = view.findViewById(R.id.lv_fav);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
 
         getFavPoi();
     }
@@ -64,19 +68,25 @@ public class FavouriteFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (task.isSuccessful()){
+                    if (task.getResult().getValue().toString().equals("")){
+                        Toast.makeText(getActivity(), "No Favourite POI!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+
                     String [] tempList = task.getResult().getValue().toString().split(", ");
                     Arrays.sort(tempList); //re-arrange list based on alphabet
-                    favPoiList.addAll(Arrays.asList(tempList));
+                    data.addAll(Arrays.asList(tempList));
 
-                    adapter = new FavPoiListAdapter(getActivity(), R.layout.item, favPoiList);
+                    adapter = new FavPoiListAdapter(getActivity(), R.layout.item, data);
                     mlv_fav.setAdapter(adapter);
                     mlv_fav.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent data = new Intent();
-                            data.putExtra("selectedPoi", favPoiList.get(position));
+                            Intent dataToPass = new Intent();
+                            dataToPass.putExtra("selectedPoi", data.get(position));
                             // Activity finished ok, return the data
-                            getActivity().setResult(Activity.RESULT_OK, data);
+                            getActivity().setResult(Activity.RESULT_OK, dataToPass);
                             getActivity().finish();
                         }
                     });
@@ -108,32 +118,79 @@ public class FavouriteFragment extends Fragment {
                 viewHolder.fav = (ImageView) convertView.findViewById(R.id.fav);
                 viewHolder.unfav = (ImageView) convertView.findViewById(R.id.unfav);
 
-                viewHolder.fav.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String poiName = favPoiList.get(position);
-                        viewHolder.unfav.setVisibility(View.VISIBLE);
-                        viewHolder.fav.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), poiName + " removed to favourites!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                viewHolder.unfav.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String poiName = favPoiList.get(position);
-                        viewHolder.fav.setVisibility(View.VISIBLE);
-                        viewHolder.unfav.setVisibility(View.GONE);
-                        Toast.makeText(getActivity(), poiName + " added to favourites!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
                 convertView.setTag(viewHolder);
                 mainViewholder = (ViewHolder) viewHolder;
             }else
                 mainViewholder = (ViewHolder) convertView.getTag();
 
             mainViewholder.poiName.setText(getItem(position));
+            ViewHolder finalMainViewholder = mainViewholder;
+
+            mainViewholder.fav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDatabase.getReference("Users")
+                            .child(mAuth.getCurrentUser().getUid()).child("favPoiNames")
+                            .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (task.isSuccessful()){
+                                if (!task.getResult().getValue().equals("")){
+                                    String[] favPoiNames = task.getResult().getValue().toString().split(", ");
+                                    favPoiList.clear();
+                                    favPoiList.addAll(Arrays.asList(favPoiNames));
+                                }
+
+                                StringBuilder temp = new StringBuilder();
+                                favPoiList.add(data.get(position));
+                                Collections.sort(favPoiList);
+
+                                for (String favPoiName : favPoiList){
+                                    if (!favPoiName.equals(data.get(position))){
+                                        temp.append(favPoiName);
+                                        if (favPoiName.equals(favPoiList.get(favPoiList.size() - 1))){
+                                            break;
+                                        }else{
+                                            temp.append(", ");
+                                        }
+                                    }
+                                }
+
+                                mDatabase.getReference("Users")
+                                        .child(mAuth.getCurrentUser().getUid()).child("favPoiNames")
+                                        .setValue(temp.toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+                                            String poiName = data.get(position);
+                                            data.remove(position);
+                                            notifyDataSetChanged();
+                                            finalMainViewholder.unfav.setVisibility(View.VISIBLE);
+                                            finalMainViewholder.fav.setVisibility(View.GONE);
+                                            Toast.makeText(getActivity(), poiName + " removed from favourites!", Toast.LENGTH_SHORT).show();
+
+                                        }else{
+                                            Toast.makeText(getActivity(), "Failed to update favourite POIs to database!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }else{
+                                Toast.makeText(getActivity(), "Failed to receive favourite POIs from database!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            });
+
+            for (String favPoiName : data){
+                if (getItem(position).equals(favPoiName)){
+                    mainViewholder.fav.setVisibility(View.VISIBLE);
+                    mainViewholder.unfav.setVisibility(View.GONE);
+                    break;
+                }
+                mainViewholder.fav.setVisibility(View.GONE);
+                mainViewholder.unfav.setVisibility(View.VISIBLE);
+            }
 
             return convertView;
         }
