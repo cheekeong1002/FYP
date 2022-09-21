@@ -105,19 +105,21 @@ public class SelectPoi extends AppCompatActivity {
                 favPoiList.clear();
                 favPoiList.addAll(Arrays.asList(tempList));
 
-                data.add(newPoiName);
+                if (!newPoiName.equals("")){
+                    data.add(newPoiName);
 
-                Set<String> set = new LinkedHashSet<String>(data);
-                set.addAll(data);
+                    Set<String> set = new LinkedHashSet<String>(data);
+                    set.addAll(data);
 
-                SharedPreferences prefs = getSharedPreferences("SelectedPOIs", MODE_PRIVATE);
-                JSONArray jsonArray = new JSONArray(data);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("SelectedPOIsKey", jsonArray.toString());
-                editor.apply();
+                    SharedPreferences prefs = getSharedPreferences("SelectedPOIs", MODE_PRIVATE);
+                    JSONArray jsonArray = new JSONArray(data);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("SelectedPOIsKey", jsonArray.toString());
+                    editor.apply();
+                    Toast.makeText(SelectPoi.this, newPoiName + " has been added to selected POIs!", Toast.LENGTH_LONG).show();
+                }
 
                 adapter.notifyDataSetChanged();
-                Toast.makeText(SelectPoi.this, newPoiName + " has been added to selected POIs!", Toast.LENGTH_LONG).show();
             }
         });
     }

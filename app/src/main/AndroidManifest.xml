@@ -13,8 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".DisplayPoiOrder"></activity>
         <activity android:name=".AddPoi"
-            android:label="@string/addPoi"
-            android:parentActivityName=".Test"/>
+            android:label="@string/addPoi"/>
 
         <activity
             android:name=".SelectPoi"

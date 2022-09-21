@@ -3,6 +3,8 @@ package com.example.fypmock;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +44,7 @@ public class FavouriteFragment extends Fragment {
     FirebaseAuth mAuth;
 
     private FavPoiListAdapter adapter;
+    private ArrayList<String> selectedPOIs = new ArrayList<>();
     private ArrayList<String> data = new ArrayList<>();
     private ArrayList<String> favPoiList = new ArrayList<>();
     private ListView mlv_fav;
@@ -58,6 +64,34 @@ public class FavouriteFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
 
+        SharedPreferences prefs = getActivity().getSharedPreferences("SelectedPOIs", getActivity().MODE_PRIVATE);
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", null));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                selectedPOIs.add(jsonArray.get(i).toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Button cancel_btn = view.findViewById(R.id.cancel_button);
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent dataToPass = new Intent();
+                dataToPass.putExtra("selectedPoi", "");
+                // Activity finished ok, return the data
+                getActivity().setResult(Activity.RESULT_OK, dataToPass);
+                Toast.makeText(getActivity(), "Action Canceled!", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+        });
+
         getFavPoi();
     }
 
@@ -73,7 +107,6 @@ public class FavouriteFragment extends Fragment {
                         return;
                     }
 
-
                     String [] tempList = task.getResult().getValue().toString().split(", ");
                     Arrays.sort(tempList); //re-arrange list based on alphabet
                     data.addAll(Arrays.asList(tempList));
@@ -83,6 +116,13 @@ public class FavouriteFragment extends Fragment {
                     mlv_fav.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            for (String poiName : selectedPOIs){
+                                if (poiName.equals(data.get(position))){
+                                    Toast.makeText(getActivity(), poiName + " has already been selected!", Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+
                             Intent dataToPass = new Intent();
                             dataToPass.putExtra("selectedPoi", data.get(position));
                             // Activity finished ok, return the data
@@ -181,6 +221,12 @@ public class FavouriteFragment extends Fragment {
                     });
                 }
             });
+
+            for(String selectedPoiName : selectedPOIs){
+                if (getItem(position).equals(selectedPoiName)){
+                    mainViewholder.poiName.setTextColor(Color.parseColor("#808080"));
+                }
+            }
 
             for (String favPoiName : data){
                 if (getItem(position).equals(favPoiName)){
