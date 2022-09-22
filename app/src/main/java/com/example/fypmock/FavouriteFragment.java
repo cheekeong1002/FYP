@@ -50,6 +50,38 @@ public class FavouriteFragment extends Fragment {
     private ListView mlv_fav;
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("favPoiNames")
+                .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()){
+                    if (!task.getResult().getValue().equals("")){
+                        String [] tempFavList = task.getResult().getValue().toString().split(", ");
+                        Arrays.sort(tempFavList); //re-arrange list based on alphabet
+
+                        if (!Arrays.asList(tempFavList).equals(data)){
+                            data.clear();
+                            data.addAll(Arrays.asList(tempFavList));
+                            adapter.notifyDataSetChanged();
+                        }
+                    }else{
+                        if (data.size() != 0){
+                            data.clear();
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }else{
+                    Toast.makeText(getActivity(), "Failed to retrieve favourite POI names!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment

@@ -62,6 +62,39 @@ public class AllPoiFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        FirebaseDatabase.getInstance().getReference("Users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("favPoiNames")
+                .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (task.isSuccessful()){
+                    if (!task.getResult().getValue().equals("")){
+                        String [] tempFavList = task.getResult().getValue().toString().split(", ");
+                        Arrays.sort(tempFavList); //re-arrange list based on alphabet
+
+                        if (!Arrays.asList(tempFavList).equals(favPoiList)){
+                            favPoiList.clear();
+                            favPoiList.addAll(Arrays.asList(tempFavList));
+                            adapter.notifyDataSetChanged();
+                        }
+                    }else{
+                        if (favPoiList.size() != 0){
+                            favPoiList.clear();
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                }else{
+                    Toast.makeText(getActivity(), "Failed to retrieve favourite POI names!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -328,14 +361,19 @@ public class AllPoiFragment extends Fragment {
                 mainViewholder.poiName.setTextColor(Color.parseColor("#000000"));
             }
 
-            for (String favPoiName : favPoiList){
-                if (getItem(position).equals(favPoiName)){
-                    mainViewholder.fav.setVisibility(View.VISIBLE);
-                    mainViewholder.unfav.setVisibility(View.GONE);
-                    break;
-                }
+            if (favPoiList.size() == 0){
                 mainViewholder.fav.setVisibility(View.GONE);
                 mainViewholder.unfav.setVisibility(View.VISIBLE);
+            }else{
+                for (String favPoiName : favPoiList){
+                    if (getItem(position).equals(favPoiName)){
+                        mainViewholder.fav.setVisibility(View.VISIBLE);
+                        mainViewholder.unfav.setVisibility(View.GONE);
+                        break;
+                    }
+                    mainViewholder.fav.setVisibility(View.GONE);
+                    mainViewholder.unfav.setVisibility(View.VISIBLE);
+                }
             }
 
             return convertView;
