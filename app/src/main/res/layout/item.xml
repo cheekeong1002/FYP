@@ -7,7 +7,7 @@
     android:descendantFocusability="blocksDescendants">
 
     <TextView
-        android:id="@+id/tv_username"
+        android:id="@+id/tv_poiName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="7"

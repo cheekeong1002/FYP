@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="POIs">
+        <item>Starbucks</item>
+        <item>Padini</item>
+        <item>Switch</item>
+        <item>Baskin Robbins</item>
+        <item>Tea Live</item>
+        <item>H&amp;M</item>
+        <item>Samsung</item>
+        <item>Leomag Waffle</item>
+        <item>Gong Cha</item>
+        <item>Uniqlo</item>
+        <item>Oppo</item>
+        <item>Auntie Anne\'s</item>
+        <item>Zus Coffee</item>
+        <item>Forever 21</item>
+        <item>Huawei</item>
+        <item>Summer Bakery</item>
+        <item>Coffee Bean</item>
+        <item>Giordano</item>
+        <item>Vivo</item>
+        <item>Winter Warmer</item>
+        <item>An Viet</item>
+        <item>Go Noodle</item>
+        <item>Ippudo</item>
+        <item>Din Tai Fung</item>
+        <item>Canton-i</item>
+        <item>McD</item>
+        <item>Dragon-i</item>
+        <item>Kim Gary</item>
+        <item>Han Sik Ga</item>
+        <item>Max Gourmet</item>
+        <item>Sushi Tei</item>
+        <item>Nando\'s</item>
+        <item>Seoul Garden</item>
+        <item>Khun De</item>
+        <item>The Barn</item>
+        <item>Age\'s Ago</item>
+        <item>Mr. Dakgalbi</item>
+        <item>Kyo Chon</item>
+        <item>KFC</item>
+        <item>Ho Min San</item>
+    </string-array>
+</resources>

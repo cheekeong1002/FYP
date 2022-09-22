@@ -104,12 +104,11 @@ public class FavouriteFragment extends Fragment {
                 if (task.isSuccessful()){
                     if (task.getResult().getValue().toString().equals("")){
                         Toast.makeText(getActivity(), "No Favourite POI!", Toast.LENGTH_SHORT).show();
-                        return;
+                    }else{
+                        String [] tempList = task.getResult().getValue().toString().split(", ");
+                        Arrays.sort(tempList); //re-arrange list based on alphabet
+                        data.addAll(Arrays.asList(tempList));
                     }
-
-                    String [] tempList = task.getResult().getValue().toString().split(", ");
-                    Arrays.sort(tempList); //re-arrange list based on alphabet
-                    data.addAll(Arrays.asList(tempList));
 
                     adapter = new FavPoiListAdapter(getActivity(), R.layout.item, data);
                     mlv_fav.setAdapter(adapter);
@@ -154,7 +153,7 @@ public class FavouriteFragment extends Fragment {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 convertView = inflater.inflate(layout, parent, false);
                 FavouriteFragment.ViewHolder viewHolder = new ViewHolder();
-                viewHolder.poiName = (TextView) convertView.findViewById(R.id.tv_username);
+                viewHolder.poiName = (TextView) convertView.findViewById(R.id.tv_poiName);
                 viewHolder.fav = (ImageView) convertView.findViewById(R.id.fav);
                 viewHolder.unfav = (ImageView) convertView.findViewById(R.id.unfav);
 
@@ -225,7 +224,9 @@ public class FavouriteFragment extends Fragment {
             for(String selectedPoiName : selectedPOIs){
                 if (getItem(position).equals(selectedPoiName)){
                     mainViewholder.poiName.setTextColor(Color.parseColor("#808080"));
+                    break;
                 }
+                mainViewholder.poiName.setTextColor(Color.parseColor("#000000"));
             }
 
             for (String favPoiName : data){
