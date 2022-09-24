@@ -1,14 +1,33 @@
 package com.example.fypmock;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import es.situm.sdk.SitumSdk;
@@ -26,14 +45,19 @@ public class DisplayPoiOrder extends GetBuildingID {
     private final GetPoiUseCase getPoiUseCase = new GetPoiUseCase();
     private final List<Poi> buildingPoi = new ArrayList<>();
 
+    private Point startingPoint;
     private String navMethod;
-    ArrayList<String> selectedPoiList = new ArrayList<>();
+    private ArrayList<String> selectedPoiList = new ArrayList<>();
     private final ArrayList<String[]> allCombinations = new ArrayList<>();
     private ArrayList<String[]> pairPoi = new ArrayList<>();
     private ArrayList<Double> pairPoiDistance = new ArrayList<>();
+    private ArrayList<String[]> samePaths = new ArrayList<>();
+    private ArrayList<String> orderToDisplay = new ArrayList<>();
     private boolean calNextFloor = false;
     private boolean nextFloorCalculated = false;
-    private String first = "a";
+    private DisplayPoiAdapter adapter;
+    private ListView mlv_fav;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +66,19 @@ public class DisplayPoiOrder extends GetBuildingID {
 
         navMethod = (String) getIntent().getStringExtra("SELECTED_METHOD");
         selectedPoiList.addAll(getIntent().getParcelableArrayListExtra("SELECTED_POIS"));
-        Toast.makeText(this, selectedPoiList.toString(), Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(this, navMethod, Toast.LENGTH_SHORT).show();
+        mProgressBar = findViewById(R.id.progressBar);
+        mlv_fav = findViewById(R.id.lv_poiOrder);
+        Button addMorePoi_btn = findViewById(R.id.btn_addMorePoi);
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        addMorePoi_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         buildingID = getBuildingID();
 
@@ -55,8 +89,78 @@ public class DisplayPoiOrder extends GetBuildingID {
         SitumSdk.configuration().setUserPass("p19011503@student.newinti.edu.my", "T@nck2001");
         SitumSdk.configuration().setApiKey("p19011503@student.newinti.edu.my", "791bb3e3a8856145aed74aae9e138e8c1d45289fe7584b63c60ae60802c426c1");
 
-        getAllCombinations(selectedPoiList, 0);
-        setPoiOfBuilding();
+        switch (navMethod){
+            case "Follow sequence":
+                orderToDisplay.clear();
+                orderToDisplay.addAll(selectedPoiList);
+                adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
+                mlv_fav.setAdapter(adapter);
+                Toast.makeText(this, "Follow sequence", Toast.LENGTH_SHORT).show();
+                mProgressBar.setVisibility(View.GONE);
+                break;
+
+            case "Follow sequence + return to start":
+                orderToDisplay.clear();
+                orderToDisplay.addAll(selectedPoiList);
+                orderToDisplay.add("Starting Point");
+                adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
+                mlv_fav.setAdapter(adapter);
+                Toast.makeText(this, "Follow sequence + return to start", Toast.LENGTH_SHORT).show();
+                mProgressBar.setVisibility(View.GONE);
+                break;
+
+            case "Shortest path":
+                getAllCombinations(selectedPoiList, 0);
+                setPoiOfBuilding();
+                Toast.makeText(this, "Shortest path", Toast.LENGTH_SHORT).show();
+                break;
+
+            case "Shortest path + return to start":
+                getAllCombinations(selectedPoiList, 0);
+                setPoiOfBuilding();
+                Toast.makeText(this, "Shortest path + return to start", Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    private class DisplayPoiAdapter extends ArrayAdapter<String> {
+        private int layout;
+
+        public DisplayPoiAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
+            super(context, resource, objects);
+            layout = resource;
+        }
+
+        @SuppressLint("SetTextI18n")
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            DisplayPoiOrder.ViewHolder mainViewholder = null;
+
+            if (convertView == null){
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(layout, parent, false);
+                DisplayPoiOrder.ViewHolder viewHolder = new ViewHolder();
+                viewHolder.poiName = (TextView) convertView.findViewById(R.id.tv_poiName);
+                viewHolder.fav = (ImageView) convertView.findViewById(R.id.fav);
+                viewHolder.unfav = (ImageView) convertView.findViewById(R.id.unfav);
+
+                convertView.setTag(viewHolder);
+                mainViewholder = (DisplayPoiOrder.ViewHolder) viewHolder;
+            }else
+                mainViewholder = (DisplayPoiOrder.ViewHolder) convertView.getTag();
+
+            mainViewholder.poiName.setText((position + 1) + ". " + getItem(position));
+            mainViewholder.fav.setVisibility(View.GONE);
+            mainViewholder.unfav.setVisibility(View.GONE);
+
+            return convertView;
+        }
+    }
+
+    public class ViewHolder {
+        TextView poiName;
+        ImageView fav, unfav;
     }
 
     private void getShortestPath(){
@@ -72,7 +176,7 @@ public class DisplayPoiOrder extends GetBuildingID {
             for (int i=0; i<combination.length; i++){
                 if (i==0){
                     //start location
-                    fromName = "Age's Ago";
+                    fromName = "Starting Point";
                 }else{
                     fromName = combination[i-1];
                 }
@@ -95,27 +199,38 @@ public class DisplayPoiOrder extends GetBuildingID {
                 shortestDistance = totalDistance;
                 //add start location
                 shortestPath.clear();
-                shortestPath.add("Age's Ago");
                 shortestPath.addAll(Arrays.asList(allCombinations.get(combCounter)));
+                String[] temp = shortestPath.toArray(new String[0]);
+                samePaths.add(temp);
             }else{
                 if (totalDistance < shortestDistance){
+                    samePaths.clear();
                     shortestDistance = totalDistance;
                     //add start location
                     shortestPath.clear();
-                    shortestPath.add("Age's Ago");
                     shortestPath.addAll(Arrays.asList(allCombinations.get(combCounter)));
+                    String[] temp = shortestPath.toArray(new String[0]);
+                    samePaths.add(temp);
+                }else if (totalDistance == shortestDistance){
+                    String[] temp = shortestPath.toArray(new String[0]);
+                    samePaths.add(temp);
                 }
             }
 
             combCounter++;
         }
 
-        Log.d("TAG", "shortest distance: " + shortestDistance);
         Log.d("TAG", "shortest path: " + shortestPath);
+
+        orderToDisplay.clear();
+        orderToDisplay.addAll(shortestPath);
+        adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
+        mlv_fav.setAdapter(adapter);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private void getPairDistance(int cid){
-        String fromName = "", toName = "";
+        String fromName, toName;
         Point from = null, to = null;
 
         if (cid == pairPoi.size()){
@@ -135,6 +250,12 @@ public class DisplayPoiOrder extends GetBuildingID {
             }
         }
 
+        if (fromName.equals("Starting Point")){
+            from = startingPoint;
+        }else if (toName.equals("Starting Point")){
+            to = startingPoint;
+        }
+
         if (!from.getFloorIdentifier().equals(to.getFloorIdentifier())){
             if (calNextFloor){
                 nextFloorCalculated = true;
@@ -142,7 +263,6 @@ public class DisplayPoiOrder extends GetBuildingID {
                 for(Poi poi : buildingPoi){
                     if (poi.getName().equals("Stair") && poi.getFloorIdentifier().equals(to.getFloorIdentifier())){
                         from = poi.getPosition();
-                        Log.d("TAG", "from1: " + poi);
                     }
                 }
             }else{
@@ -151,8 +271,6 @@ public class DisplayPoiOrder extends GetBuildingID {
                 for(Poi poi : buildingPoi){
                     if (poi.getName().equals("Stair") && poi.getFloorIdentifier().equals(from.getFloorIdentifier())){
                         to = poi.getPosition();
-                        Log.d("TAG", "to1: " + poi);
-                        Log.d("TAG", "should stop: " + cid);
                     }
                 }
             }
@@ -211,11 +329,11 @@ public class DisplayPoiOrder extends GetBuildingID {
             for (int x = 0; x < combination.length; x++) {
                 String fromName = "", toName = "";
 
-                //get from position
+                //get from name
                 if (x == 0) {
-                    //start location
-                    fromName = buildingPoi.get(0).getName();
-                    Log.d("TAG", "from: " + buildingPoi.get(0).getName());
+                    //modify
+                    fromName = "Starting Point";
+                    Log.d("TAG", "from: Starting Point");
                 } else {
                     for (Poi poi : buildingPoi) {
                         if (poi.getName().equals(combination[x - 1])) {
@@ -225,11 +343,16 @@ public class DisplayPoiOrder extends GetBuildingID {
                     }
                 }
 
-                //get to position
-                for (Poi poi : buildingPoi) {
-                    if (poi.getName().equals(combination[x])) {
-                        toName = poi.getName();
-                        Log.d("TAG", "to: " + poi.getName());
+                if (combination[x].equals("Starting Point")){
+                    toName = "Starting Point";
+                    Log.d("TAG", "to: Starting Point");
+                }else{
+                    //get to position
+                    for (Poi poi : buildingPoi) {
+                        if (poi.getName().equals(combination[x])) {
+                            toName = poi.getName();
+                            Log.d("TAG", "to: " + poi.getName());
+                        }
                     }
                 }
 
@@ -238,7 +361,7 @@ public class DisplayPoiOrder extends GetBuildingID {
                 if (!pairExists) {
                     String[] temp = {fromName, toName};
                     pairPoi.add(temp);
-                    Log.d("TAG", "printer: ");
+                    Log.d("TAG", "unique pair: " + Arrays.toString(temp));
                 }
             }
             currentIteration++;
@@ -252,6 +375,15 @@ public class DisplayPoiOrder extends GetBuildingID {
             @Override
             public void onSuccess(List<Poi> pois) {
                 buildingPoi.addAll(pois);
+
+                //modify here
+                for (Poi poi : buildingPoi){
+                    if (poi.getName().equals("Age's Ago")){
+                        startingPoint = poi.getPosition();
+                        break;
+                    }
+                }
+
                 formPoiPairs();
             }
 
@@ -270,7 +402,16 @@ public class DisplayPoiOrder extends GetBuildingID {
 
     private void getAllCombinations(ArrayList<String> selectedPoiList, int cid){
         if (cid == selectedPoiList.size()-1){
-            String[] temp = selectedPoiList.toArray(new String[0]);
+            String[] temp;
+
+            if(navMethod.equals("Shortest path + return to start")){
+                ArrayList<String> tempArrList = new ArrayList<>(selectedPoiList);
+                tempArrList.add("Starting Point");
+                temp = tempArrList.toArray(new String[0]);
+            }else{
+                temp = selectedPoiList.toArray(new String[0]);
+            }
+
             allCombinations.add(temp);
             return;
         }
