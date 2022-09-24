@@ -9,9 +9,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,7 +43,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class SelectPoi extends AppCompatActivity {
+public class SelectPoi extends AppCompatActivity implements MyDialogFragmentListener{
 
     FirebaseAuth mAuth;
     FirebaseDatabase mDatabase;
@@ -48,7 +51,6 @@ public class SelectPoi extends AppCompatActivity {
     private ArrayList<String> data = new ArrayList<String>();
     private ArrayList<String> favPoiList = new ArrayList<String>();
     private ListView lv;
-    private Button add_btn, calRoute_btn;
     private SelectedPoiListAdapter adapter;
 
     @Override
@@ -59,8 +61,8 @@ public class SelectPoi extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance();
         setContentView(R.layout.activity_select_poi);
         lv = findViewById(R.id.lv_selectedPoi);
-        add_btn = findViewById(R.id.btn_add);
-        calRoute_btn = findViewById(R.id.btn_calRoute);
+        Button add_btn = findViewById(R.id.btn_add);
+        Button calRoute_btn = findViewById(R.id.btn_calRoute);
 
         add_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,8 +75,11 @@ public class SelectPoi extends AppCompatActivity {
         calRoute_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SelectPoi.this, DisplayPoiOrder.class);
-                startActivity(intent);
+                if (data.size() == 0){
+                    Toast.makeText(SelectPoi.this, "No POI selected!", Toast.LENGTH_SHORT).show();
+                }else{
+                    new NavMethodSelectionDialog().show(getSupportFragmentManager(), "NavigationMethodSelection");
+                }
             }
         });
 
@@ -157,6 +162,14 @@ public class SelectPoi extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onReturnValue(String selectedMethod) {
+        Intent intent = new Intent(SelectPoi.this, DisplayPoiOrder.class);
+        intent.putExtra("SELECTED_METHOD", selectedMethod);
+        intent.putExtra("SELECTED_POIS", data);
+        startActivity(intent);
     }
 
     private class SelectedPoiListAdapter extends ArrayAdapter<String>{

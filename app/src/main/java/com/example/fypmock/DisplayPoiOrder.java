@@ -17,6 +17,7 @@ import es.situm.sdk.error.Error;
 import es.situm.sdk.model.cartography.Poi;
 import es.situm.sdk.model.cartography.Point;
 import es.situm.sdk.model.directions.Route;
+import es.situm.sdk.model.location.Location;
 import es.situm.sdk.utils.Handler;
 
 public class DisplayPoiOrder extends GetBuildingID {
@@ -25,6 +26,8 @@ public class DisplayPoiOrder extends GetBuildingID {
     private final GetPoiUseCase getPoiUseCase = new GetPoiUseCase();
     private final List<Poi> buildingPoi = new ArrayList<>();
 
+    private String navMethod;
+    ArrayList<String> selectedPoiList = new ArrayList<>();
     private final ArrayList<String[]> allCombinations = new ArrayList<>();
     private ArrayList<String[]> pairPoi = new ArrayList<>();
     private ArrayList<Double> pairPoiDistance = new ArrayList<>();
@@ -37,6 +40,12 @@ public class DisplayPoiOrder extends GetBuildingID {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_poi_order);
 
+        navMethod = (String) getIntent().getStringExtra("SELECTED_METHOD");
+        selectedPoiList.addAll(getIntent().getParcelableArrayListExtra("SELECTED_POIS"));
+        Toast.makeText(this, selectedPoiList.toString(), Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(this, navMethod, Toast.LENGTH_SHORT).show();
+
         buildingID = getBuildingID();
 
         //Initialize SitumSdk
@@ -45,13 +54,6 @@ public class DisplayPoiOrder extends GetBuildingID {
         // Set credentials
         SitumSdk.configuration().setUserPass("p19011503@student.newinti.edu.my", "T@nck2001");
         SitumSdk.configuration().setApiKey("p19011503@student.newinti.edu.my", "791bb3e3a8856145aed74aae9e138e8c1d45289fe7584b63c60ae60802c426c1");
-
-        ArrayList<String> selectedPoiList = new ArrayList<>();
-        selectedPoiList.add("Vivo");
-        selectedPoiList.add("KFC");
-        selectedPoiList.add("Ippudo");
-        selectedPoiList.add("Kim Gary");
-        selectedPoiList.add("Sushi Tei");
 
         getAllCombinations(selectedPoiList, 0);
         setPoiOfBuilding();
