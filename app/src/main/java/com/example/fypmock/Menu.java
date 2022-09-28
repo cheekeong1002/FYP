@@ -98,6 +98,11 @@ public class Menu extends AppCompatActivity {
                         startActivity(intent);
                         break;
 
+                    case "Favourite POIs":
+                        intent = new Intent(Menu.this, FavouritePoiActivity.class);
+                        startActivity(intent);
+                        break;
+
                     case "View Map":
                         intent = new Intent(Menu.this, Map.class);
                         startActivity(intent);
