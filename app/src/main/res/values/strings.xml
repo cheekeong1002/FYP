@@ -33,4 +33,6 @@
     <string name="poi_order">Order to visit all POI(s): </string>
     <string name="order_of_poi">Order of POI</string>
     <string name="add_more_poi">Add More POI</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="reset_password">Reset Password</string>
 </resources>

@@ -11,13 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".AddFavPoi"
-            android:label="Add Favourite"/>
-        <activity
-            android:name=".FavouritePoiActivity"
-            android:label="Favourite POIs"
-            android:parentActivityName=".Test" />
+        <activity android:name=".ForgotPasswordActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -30,15 +24,8 @@
             android:value="791bb3e3a8856145aed74aae9e138e8c1d45289fe7584b63c60ae60802c426c1" />
 
         <activity
-            android:name=".DisplayPoiOrder"
-            android:label="@string/order_of_poi" />
-        <activity
-            android:name=".AddPoi"
-            android:label="@string/addPoi" />
-        <activity
-            android:name=".SelectPoi"
-            android:label="@string/plan_route"
-            android:parentActivityName=".SelectPoi" />
+            android:name=".RegisterActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
@@ -49,12 +36,34 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddFavPoi"
+            android:label="Add Favourite" />
+        <activity
+            android:name=".FavouritePoiActivity"
+            android:label="Favourite POIs"
+            android:parentActivityName=".Test" />
+        <activity
+            android:name=".Map"
+            android:label="Map"
+            android:parentActivityName=".Test" />
+        <activity
+            android:name=".SelectPoi"
+            android:label="@string/plan_route"
+            android:parentActivityName=".SelectPoi" />
+        <activity
+            android:name=".AddPoi"
+            android:label="@string/addPoi" />
+        <activity
+            android:name=".DisplayPoiOrder"
+            android:label="@string/order_of_poi" />
+        <activity
+            android:name=".Navigation"
+            android:label="AnimatePositionActivity"
+            android:parentActivityName=".Test" />
         <activity
             android:name=".Test2"
             android:parentActivityName=".Test" />
@@ -66,14 +75,6 @@
             android:name=".PositioningActivity"
             android:parentActivityName=".Test"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Map"
-            android:label="Map"
-            android:parentActivityName=".Test" />
-        <activity
-            android:name=".Navigation"
-            android:label="AnimatePositionActivity"
-            android:parentActivityName=".Test" />
     </application>
 
 </manifest>

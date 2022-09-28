@@ -24,7 +24,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private FirebaseAuth mAuth;
     private EditText met_email, met_password;
-    private TextView mtv_toRegister;
+    private TextView mtv_toRegister, mtv_forgotPassword;
     private Button login_btn;
     private ProgressBar mProgressBar;
 
@@ -43,6 +43,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mtv_toRegister = findViewById(R.id.tv_toRegister);
         mtv_toRegister.setOnClickListener(this);
 
+        mtv_forgotPassword = findViewById(R.id.tv_forgotPassword);
+        mtv_forgotPassword.setOnClickListener(this);
+
         login_btn = findViewById(R.id.btn_login);
         login_btn.setOnClickListener(this);
 
@@ -53,11 +56,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        Intent intent;
+
         switch (v.getId()){
-            case R.id.tv_toRegister:
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            case R.id.tv_forgotPassword:
+                intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
                 startActivity(intent);
                 break;
+
+            case R.id.tv_toRegister:
+                intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.btn_login:
                 loginUser();
         }
