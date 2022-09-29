@@ -94,7 +94,7 @@ public class Menu extends AppCompatActivity {
 
                 switch (item.toString()){
                     case "Profile":
-                        intent = new Intent(Menu.this, Test.class);
+                        intent = new Intent(Menu.this, ViewProfileActivity.class);
                         startActivity(intent);
                         break;
 

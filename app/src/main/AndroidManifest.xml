@@ -11,7 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ForgotPasswordActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -36,9 +35,19 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ForgotPasswordActivity"
+            android:label="@string/reset_password"
+            android:parentActivityName=".LoginActivity"/>
+        <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ViewProfileActivity"
+            android:label="Profile"
+            android:parentActivityName=".Menu"/>
+        <activity android:name=".ModifyProfileActivity"
+            android:label="Modify Profile" />
         <activity
             android:name=".AddFavPoi"
             android:label="Add Favourite" />

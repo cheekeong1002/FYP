@@ -35,4 +35,8 @@
     <string name="add_more_poi">Add More POI</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="reset_password">Reset Password</string>
+    <string name="Hidden">Hidden</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="authenticate">Authenticate</string>
+    <string name="new_email">New Email</string>
 </resources>

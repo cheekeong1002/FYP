@@ -14,4 +14,20 @@ public class User {
         this.type = type;
         this.favPoiNames = favPoiNames;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getFavPoiNames() {
+        return favPoiNames;
+    }
 }
