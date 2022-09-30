@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -65,7 +66,7 @@ public class ViewProfileActivity extends AppCompatActivity implements View.OnCli
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
+                        Toast.makeText(ViewProfileActivity.this, "Failed to receieve data from database", Toast.LENGTH_LONG).show();
                     }
                 });
     }
@@ -90,6 +91,10 @@ public class ViewProfileActivity extends AppCompatActivity implements View.OnCli
                 break;
 
             case R.id.btn_password:
+                intent = new Intent(ViewProfileActivity.this, ModifyProfileActivity.class);
+                intent.putExtra("MODIFY_AREA", "Password");
+                intent.putExtra("DATA", mtv_email.getText());
+                resultLauncher.launch(intent);
                 break;
         }
     }
@@ -103,18 +108,22 @@ public class ViewProfileActivity extends AppCompatActivity implements View.OnCli
                         // There are no request codes
                         Intent data = result.getData();
                         String modificationArea = data.getStringExtra("MODIFY_AREA");
+                        Toast.makeText(ViewProfileActivity.this, modificationArea, Toast.LENGTH_SHORT).show();
                         String info = data.getStringExtra("DATA");
                         if (!modificationArea.equals("")){
                             switch (modificationArea){
                                 case "Username":
                                     mtv_username.setText(info);
-                                    Toast.makeText(ViewProfileActivity.this, modificationArea +
-                                            " updated successfully!", Toast.LENGTH_LONG).show();
+                                    Log.d("ViewProfileActivity", "Username has been modified!");
                                     break;
+
                                 case "Email":
                                     mtv_email.setText(info);
-                                    Toast.makeText(ViewProfileActivity.this, modificationArea +
-                                            " updated successfully!", Toast.LENGTH_LONG).show();
+                                    Log.d("ViewProfileActivity", "Email has been modified!");
+                                    break;
+
+                                case "Password":
+                                    Log.d("ViewProfileActivity", "Password has been modified!");
                                     break;
                             }
                         }

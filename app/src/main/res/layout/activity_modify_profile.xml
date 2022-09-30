@@ -92,6 +92,7 @@
             android:hint="@string/Password"/>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/tv_newEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,6 +106,7 @@
             android:textSize="16sp"/>
 
         <EditText
+            android:visibility="gone"
             android:id="@+id/et_newEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,6 +115,31 @@
             android:layout_marginEnd="15dp"
             android:inputType="textEmailAddress"
             android:hint="@string/new_email"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_newPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/new_password"
+            android:textColor="@color/mint"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/et_newPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:inputType="textPassword"
+            android:hint="@string/new_password"/>
     </LinearLayout>
 
     <Button

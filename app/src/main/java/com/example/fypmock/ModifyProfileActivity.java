@@ -30,8 +30,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
 
     LinearLayout normalLayout, reAuthLayout;
     String modificationArea, data;
-    TextView mtv_title;
-    EditText met_input, met_email, met_password, met_newEmail;
+    TextView mtv_title, mtv_newEmail, mtv_newPassword;
+    EditText met_input, met_email, met_password, met_newEmail, met_newPassword;
     ProgressBar mProgressBar;
 
     @Override
@@ -48,9 +48,12 @@ public class ModifyProfileActivity extends AppCompatActivity {
         met_input = findViewById(R.id.et_input);
         mProgressBar = findViewById(R.id.progressBar);
 
+        mtv_newEmail = findViewById(R.id.tv_newEmail);
+        mtv_newPassword = findViewById(R.id.tv_newPassword);
         met_email = findViewById(R.id.et_email);
         met_password = findViewById(R.id.et_password);
         met_newEmail = findViewById(R.id.et_newEmail);
+        met_newPassword = findViewById(R.id.et_newPassword);
 
         modificationArea = getIntent().getStringExtra("MODIFY_AREA");
         data = getIntent().getStringExtra("DATA");
@@ -66,6 +69,9 @@ public class ModifyProfileActivity extends AppCompatActivity {
                     case "Email":
                         updateEmail();
                         break;
+                    case "Password":
+                        updatePassword();
+                        break;
                 }
             }
         });
@@ -73,9 +79,92 @@ public class ModifyProfileActivity extends AppCompatActivity {
         if (modificationArea.equals("Email")){
             normalLayout.setVisibility(View.GONE);
             reAuthLayout.setVisibility(View.VISIBLE);
+            mtv_newEmail.setVisibility(View.VISIBLE);
+            met_newEmail.setVisibility(View.VISIBLE);
+        }
+
+        if (modificationArea.equals("Password")){
+            normalLayout.setVisibility(View.GONE);
+            reAuthLayout.setVisibility(View.VISIBLE);
+            mtv_newPassword.setVisibility(View.VISIBLE);
+            met_newPassword.setVisibility(View.VISIBLE);
         }
 
         updateUI();
+    }
+
+    public void updatePassword(){
+        String email = met_email.getText().toString().trim();
+        String password = met_password.getText().toString().trim();
+        String newPassword = met_newPassword.getText().toString().trim();
+
+        if(email.isEmpty()){
+            met_email.setError("Email is required!");
+            met_email.requestFocus();
+            return;
+        }
+
+        if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            met_email.setError("Email format is invalid!");
+            met_email.requestFocus();
+            return;
+        }
+
+        if(password.isEmpty()){
+            met_password.setError("Password is required!");
+            met_password.requestFocus();
+            return;
+        }
+
+        if (password.length() < 6){
+            met_password.setError("Password should not be less than 6!");
+            met_password.requestFocus();
+            return;
+        }
+
+        if(newPassword.isEmpty()){
+            met_newPassword.setError("New password is required!");
+            met_newPassword.requestFocus();
+            return;
+        }
+
+        if (newPassword.length() < 6){
+            met_newPassword.setError("New Password should not be less than 6!");
+            met_newPassword.requestFocus();
+            return;
+        }
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        AuthCredential credential = EmailAuthProvider.getCredential(email, password);
+        user.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    user.updatePassword(newPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Intent intent = new Intent();
+                                intent.putExtra("MODIFY_AREA", "Password");
+                                mProgressBar.setVisibility(View.GONE);
+                                finish();
+                                Toast.makeText(ModifyProfileActivity.this, modificationArea +
+                                        " updated successfully!", Toast.LENGTH_LONG).show();
+                            }else{
+                                Toast.makeText(ModifyProfileActivity.this, "Failed to update password!", Toast.LENGTH_LONG).show();
+                                mProgressBar.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                }else{
+                    Toast.makeText(ModifyProfileActivity.this, "Failed to authenticate user! Try again!", Toast.LENGTH_LONG).show();
+                    mProgressBar.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     public void updateEmail(){
@@ -149,6 +238,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
                                             intent.putExtra("DATA", newEmail);
                                             mProgressBar.setVisibility(View.GONE);
                                             finish();
+                                            Toast.makeText(ModifyProfileActivity.this, modificationArea +
+                                                    " updated successfully!", Toast.LENGTH_LONG).show();
                                         }else{
                                             Toast.makeText(ModifyProfileActivity.this, "Failed to update email!", Toast.LENGTH_LONG).show();
                                             mProgressBar.setVisibility(View.GONE);
@@ -203,6 +294,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
                     intent.putExtra("DATA", username);
                     mProgressBar.setVisibility(View.GONE);
                     finish();
+                    Toast.makeText(ModifyProfileActivity.this, modificationArea +
+                            " updated successfully!", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(ModifyProfileActivity.this, "Failed to update " + modificationArea + "!", Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.GONE);
@@ -212,7 +305,7 @@ public class ModifyProfileActivity extends AppCompatActivity {
     }
 
     private void updateUI(){
-        if (modificationArea.equals("Email")){
+        if (modificationArea.equals("Email") || modificationArea.equals("Password")){
             met_email.setText(data);
         }else{
             mtv_title.setText(modificationArea);
