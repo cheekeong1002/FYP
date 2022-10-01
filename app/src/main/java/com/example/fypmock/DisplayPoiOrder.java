@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -58,6 +59,7 @@ public class DisplayPoiOrder extends GetBuildingID {
     private DisplayPoiAdapter adapter;
     private ListView mlv_fav;
     private ProgressBar mProgressBar;
+    private LinearLayout mButtonLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class DisplayPoiOrder extends GetBuildingID {
         mProgressBar = findViewById(R.id.progressBar);
         mlv_fav = findViewById(R.id.lv_poiOrder);
         Button addMorePoi_btn = findViewById(R.id.btn_addMorePoi);
+        mButtonLayout = findViewById(R.id.button_layout);
 
         mProgressBar.setVisibility(View.VISIBLE);
 
@@ -95,8 +98,8 @@ public class DisplayPoiOrder extends GetBuildingID {
                 orderToDisplay.addAll(selectedPoiList);
                 adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
                 mlv_fav.setAdapter(adapter);
-                Toast.makeText(this, "Follow sequence", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
+                mButtonLayout.setVisibility(View.VISIBLE);
                 break;
 
             case "Follow sequence + return to start":
@@ -105,20 +108,18 @@ public class DisplayPoiOrder extends GetBuildingID {
                 orderToDisplay.add("Starting Point");
                 adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
                 mlv_fav.setAdapter(adapter);
-                Toast.makeText(this, "Follow sequence + return to start", Toast.LENGTH_SHORT).show();
                 mProgressBar.setVisibility(View.GONE);
+                mButtonLayout.setVisibility(View.VISIBLE);
                 break;
 
             case "Shortest path":
                 getAllCombinations(selectedPoiList, 0);
                 setPoiOfBuilding();
-                Toast.makeText(this, "Shortest path", Toast.LENGTH_SHORT).show();
                 break;
 
             case "Shortest path + return to start":
                 getAllCombinations(selectedPoiList, 0);
                 setPoiOfBuilding();
-                Toast.makeText(this, "Shortest path + return to start", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -227,6 +228,7 @@ public class DisplayPoiOrder extends GetBuildingID {
         adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
         mlv_fav.setAdapter(adapter);
         mProgressBar.setVisibility(View.GONE);
+        mButtonLayout.setVisibility(View.VISIBLE);
     }
 
     private void getPairDistance(int cid){

@@ -40,4 +40,6 @@
     <string name="authenticate">Authenticate</string>
     <string name="new_email">New Email</string>
     <string name="new_password">New Password</string>
+    <string name="preview_map">Preview Map</string>
+    <string name="end_preview">End Preview</string>
 </resources>
