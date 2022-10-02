@@ -128,6 +128,7 @@ public class FavouritePoiActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
                                 data.add(newFavPoiName);
+                                Collections.sort(data);
                                 adapter.notifyDataSetChanged();
                                 Toast.makeText(FavouritePoiActivity.this, newFavPoiName + " has been added to favourite POIs!", Toast.LENGTH_LONG).show();
 
