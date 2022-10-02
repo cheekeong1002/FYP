@@ -137,7 +137,10 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
 
         while (favPoiCounter.size() != 0){
             for (int x = 0; x < favPoiCounter.size(); x++){
+                Log.d("TAG", "total: " + favPoiCounter.get(x));
+                Log.d("TAG", "highest: " + highestTotal);
                 if (favPoiCounter.get(x) > highestTotal){
+                    Log.d("TAG", "enter: ");
                     highestTotal = favPoiCounter.get(x);
                     highestPOIPost = x;
                 }
@@ -147,6 +150,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             String favPoiName = allFavPoi.get(highestPOIPost);
             favPoiCounter.remove(highestPOIPost);
             allFavPoi.remove(highestPOIPost);
+            highestTotal = 0;
             highestPOIPost = 0;
 
             String[] tempArray = {Float.toString(totalPoi), favPoiName};
