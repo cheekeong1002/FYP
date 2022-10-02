@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.Group;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -35,7 +36,8 @@ public class Menu extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseUser user;
     private DatabaseReference ref;
-    private String userID;
+    private String userID, userType;
+    private Group userGroup, adminGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +67,7 @@ public class Menu extends AppCompatActivity {
                     View headerView = navigationView.getHeaderView(0);
                     TextView navUsername = (TextView) headerView.findViewById(R.id.tv_greeting_username);
                     navUsername.setText(userProfile.username);
+                    userType = userProfile.getType();
                 }
             }
 
@@ -87,6 +90,38 @@ public class Menu extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        if (userType == null){
+            ref.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User userProfile = snapshot.getValue(User.class);
+
+                    if (userProfile != null){
+                        userType = userProfile.getType();
+                        if (!userType.equals("user")){
+                            for (int x = 0; x < 5; x++){
+                                navigationView.getMenu().getItem(x).setVisible(false);
+                            }
+                            navigationView.getMenu().getItem(5).setVisible(true);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(Menu.this, "Failed to get user data!", Toast.LENGTH_LONG).show();
+                }
+            });
+        }else{
+            if (!userType.equals("user")){
+                for (int x = 0; x < 5; x++){
+                    navigationView.getMenu().getItem(x).setVisible(false);
+                }
+                navigationView.getMenu().getItem(5).setVisible(true);
+            }
+        }
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -110,6 +145,11 @@ public class Menu extends AppCompatActivity {
 
                     case "Plan Route":
                         intent = new Intent(Menu.this, SelectPoi.class);
+                        startActivity(intent);
+                        break;
+
+                    case "Favourite Analysis":
+                        intent = new Intent(Menu.this, FavPOIAnalysisActivity.class);
                         startActivity(intent);
                         break;
 

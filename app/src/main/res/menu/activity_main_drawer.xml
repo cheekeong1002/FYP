@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/user_group"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
@@ -18,6 +20,7 @@
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_favourite"
             android:title="@string/fav_poi" />
+
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_baseline_map_24"
@@ -28,6 +31,14 @@
             android:icon="@drawable/ic_baseline_navigation_24"
             android:title="@string/plan_route" />
 
+        <item
+            android:visible="false"
+            android:id="@+id/fav_chart"
+            android:icon="@drawable/ic_baseline_bar_chart"
+            android:title="@string/fav_analysis" />
+    </group>
+
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/logout"
             android:icon="@drawable/ic_logout"

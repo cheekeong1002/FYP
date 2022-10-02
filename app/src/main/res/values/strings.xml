@@ -42,4 +42,5 @@
     <string name="new_password">New Password</string>
     <string name="preview_map">Preview Map</string>
     <string name="end_preview">End Preview</string>
+    <string name="fav_analysis">Favourite Analysis</string>
 </resources>

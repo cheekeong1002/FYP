@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".FavPOIAnalysisActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -37,7 +38,7 @@
         <activity
             android:name=".ForgotPasswordActivity"
             android:label="@string/reset_password"
-            android:parentActivityName=".LoginActivity"/>
+            android:parentActivityName=".LoginActivity" />
         <activity
             android:name=".Menu"
             android:label="@string/title_activity_menu"
@@ -45,8 +46,9 @@
         <activity
             android:name=".ViewProfileActivity"
             android:label="Profile"
-            android:parentActivityName=".Menu"/>
-        <activity android:name=".ModifyProfileActivity"
+            android:parentActivityName=".Menu" />
+        <activity
+            android:name=".ModifyProfileActivity"
             android:label="Modify Profile" />
         <activity
             android:name=".AddFavPoi"
@@ -71,7 +73,7 @@
             android:label="@string/order_of_poi" />
         <activity
             android:name=".MapWithRoute"
-            android:label="Preview Map"/>
+            android:label="Preview Map" />
         <activity
             android:name=".Navigation"
             android:label="AnimatePositionActivity"

@@ -11,5 +11,9 @@
     <color name="red">#D0312D</color>
     <color name="light_blue">#75E6DA</color>
     <color name="grey">#808080</color>
-
+    <color name="baby_blue">#68BBE3</color>
+    <color name="blue_gorotto">#0E86D4</color>
+    <color name="blue">#055C9D</color>
+    <color name="navy_blue">#003060</color>
+    <color name="dark_blue">#050A30</color>
 </resources>
