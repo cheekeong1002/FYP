@@ -6,17 +6,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
@@ -34,11 +45,15 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
 
     private FirebaseDatabase mDatabase;
 
+    private Spinner mSpinner;
     private PieChart mPieChart;
+    private BarChart mBarChart;
+    private final ArrayList<Integer> topNumDisplay = new ArrayList<>();
     private final ArrayList<String[]> userFavPoi = new ArrayList<>();
     private final ArrayList<String> allFavPoi = new ArrayList<>();
     private final ArrayList<Integer> favPoiCounter = new ArrayList<>();
     private final ArrayList<String[]> orderToDisplay = new ArrayList<>();
+    private final ArrayList<String> labelNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +62,61 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance();
 
+        mSpinner = findViewById(R.id.topNumSelector);
         mPieChart = findViewById(R.id.favPieChart);
+        mBarChart = findViewById(R.id.favBarChart);
+
         getAllFavouritePOI();
+    }
+
+    private void loadBarChartData(int totalFavToLoad){
+        int counter = 0;
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+
+        for (String[] favPoi: orderToDisplay){
+            if (counter == totalFavToLoad){
+                break;
+            }
+            barEntries.add(new BarEntry(counter, Float.parseFloat(favPoi[0])));
+            labelNames.add(favPoi[1]);
+            counter++;
+        }
+
+        BarDataSet barDataSet = new BarDataSet(barEntries, "Top Favourite POIs");
+
+        ArrayList<Integer> barChartColors = new ArrayList<>();
+        barChartColors.add(Color.parseColor("#68BBE3"));
+        barChartColors.add(Color.parseColor("#0E86D4"));
+        barChartColors.add(Color.parseColor("#055C9D"));
+        barChartColors.add(Color.parseColor("#003060"));
+        barChartColors.add(Color.parseColor("#050A30"));
+        barDataSet.setColors(barChartColors);
+
+        Description desc = new Description();
+        desc.setText("POIs");
+        mBarChart.setDescription(desc);
+
+        BarData barData = new BarData(barDataSet);
+        mBarChart.setData(barData);
+
+        XAxis xAxis = mBarChart.getXAxis();
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(labelNames));
+
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawGridLines(false);
+        xAxis.setDrawAxisLine(false);
+        xAxis.setGranularity(1f);
+        xAxis.setLabelCount(labelNames.size());
+        xAxis.setLabelRotationAngle(270);
+        mBarChart.animateY(1400);
+        mBarChart.invalidate();
     }
 
     private void setupPieChart(){
         mPieChart.setDrawHoleEnabled(true);
         mPieChart.setEntryLabelTextSize(12);
         mPieChart.setEntryLabelColor(Color.WHITE);
-        mPieChart.setCenterText("Top 5 Favourite POI");
+        mPieChart.setCenterText("Top Favourite POIs");
         mPieChart.setCenterTextSize(24);
         mPieChart.getDescription().setEnabled(false);
 
@@ -67,15 +128,15 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         l.setEnabled(true);
     }
 
-    private void loadPieChartData(){
-        int counter = 1;
-        ArrayList<PieEntry> entries = new ArrayList<>();
+    private void loadPieChartData(int totalFavToLoad){
+        int counter = 0;
+        ArrayList<PieEntry> pieEntries = new ArrayList<>();
 
         for (String[] favPoi: orderToDisplay){
-            if (counter == 6){
+            if (counter == totalFavToLoad){
                 break;
             }
-            entries.add(new PieEntry(Float.parseFloat(favPoi[0]), favPoi[1]));
+            pieEntries.add(new PieEntry(Float.parseFloat(favPoi[0]), favPoi[1]));
             counter++;
         }
 
@@ -89,7 +150,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
 
-        PieDataSet mDataSet = new PieDataSet(entries, "");
+        PieDataSet mDataSet = new PieDataSet(pieEntries, "");
         mDataSet.setColors(colors);
 
         ValueFormatter vf = new ValueFormatter() { //value format here, here is the overridden method
@@ -135,7 +196,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         Log.d("TAG", "all poi: " + allFavPoi);
         Log.d("TAG", "all counter: " + favPoiCounter);
 
-        while (favPoiCounter.size() != 0){
+        while (favPoiCounter.size() != 0 && orderToDisplay.size() <= 10){
             for (int x = 0; x < favPoiCounter.size(); x++){
                 Log.d("TAG", "total: " + favPoiCounter.get(x));
                 Log.d("TAG", "highest: " + highestTotal);
@@ -157,8 +218,35 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             orderToDisplay.add(tempArray);
         }
 
-        setupPieChart();
-        loadPieChartData();
+        for (int x=2; x < orderToDisplay.size(); x++){
+            topNumDisplay.add(x);
+        }
+
+        ArrayAdapter<Integer> spinnerAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_dropdown_item, topNumDisplay);
+        mSpinner.setAdapter(spinnerAdapter);
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position + 2 < 6){
+                    mPieChart.setVisibility(View.VISIBLE);
+                    mBarChart.setVisibility(View.GONE);
+                    setupPieChart();
+                    loadPieChartData(position + 2);
+
+                }else{
+                    mPieChart.setVisibility(View.GONE);
+                    mBarChart.setVisibility(View.VISIBLE);
+                    loadBarChartData(position + 2);
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void getAllFavouritePOI(){
@@ -173,7 +261,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
                     }
                 }
 
-                if (userFavPoi.size() > 0){
+                if (userFavPoi.size() > 1){
                     countFavPoi();
                 }else{
                     Toast.makeText(FavPOIAnalysisActivity.this, "No data available!", Toast.LENGTH_SHORT).show();
