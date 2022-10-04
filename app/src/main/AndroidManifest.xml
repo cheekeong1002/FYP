@@ -64,7 +64,7 @@
         <activity
             android:name=".SelectPoi"
             android:label="@string/plan_route"
-            android:parentActivityName=".SelectPoi" />
+            android:parentActivityName=".Menu" />
         <activity
             android:name=".AddPoi"
             android:label="@string/addPoi" />

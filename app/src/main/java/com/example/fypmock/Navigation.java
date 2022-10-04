@@ -136,6 +136,8 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
         firstLocation = (Location) getIntent().getParcelableExtra("USER_LOCATION");
         selectedPoiNames = getIntent().getStringArrayListExtra("SELECTED_POIS");
+        Log.d(TAG, "first location: " + firstLocation);
+        Log.d(TAG, "array: " + selectedPoiNames);
         navDescLayout = (RelativeLayout) findViewById(R.id.nav_layout);
         mtvDirection = (TextView) findViewById(R.id.tvDirection);
         startNavBtn = findViewById(R.id.start_button);
@@ -668,7 +670,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 //return back to home page after pressing 'OK'
-                                Intent myIntent = new Intent(Navigation.this, Test.class);
+                                Intent myIntent = new Intent(Navigation.this, Menu.class);
                                 Navigation.this.startActivity(myIntent);
                             }
                         });
@@ -814,7 +816,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
                         navReq = new NavigationRequest.Builder()
                                 .route(route)
-                                .distanceToGoalThreshold(10d)
+                                .distanceToGoalThreshold(100d)
                                 .outsideRouteThreshold(10d)
                                 .build();
 
@@ -828,7 +830,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
                         navReq = new NavigationRequest.Builder()
                                 .route(route)
-                                .distanceToGoalThreshold(10d)
+                                .distanceToGoalThreshold(100d)
                                 .outsideRouteThreshold(10d)
                                 .build();
 
