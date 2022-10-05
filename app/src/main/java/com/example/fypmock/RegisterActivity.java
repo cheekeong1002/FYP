@@ -25,7 +25,7 @@ import java.util.ArrayList;
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     private FirebaseAuth mAuth;
-    private EditText met_username, met_email, met_password;
+    private EditText met_username, met_email, met_password, met_rePassword;
     private TextView mtv_toLogin;
     private Button register_btn;
     private ProgressBar mProgressBar;
@@ -46,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         met_username = findViewById(R.id.et_username);
         met_email = findViewById(R.id.et_email);
         met_password = findViewById(R.id.et_password);
+        met_rePassword = findViewById(R.id.et_rePassword);
         mProgressBar = findViewById(R.id.progressBar);
         mProgressBar.setVisibility(View.GONE);
     }
@@ -67,6 +68,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String username = met_username.getText().toString().trim();
         String email = met_email.getText().toString().trim();
         String password = met_password.getText().toString().trim();
+        String rePassword = met_rePassword.getText().toString().trim();
 
         if(username.isEmpty()){
             met_username.setError("Username is required!");
@@ -86,6 +88,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        if(rePassword.isEmpty()){
+            met_rePassword.setError("Retype password is required!");
+            met_rePassword.requestFocus();
+            return;
+        }
+
         if(username.length() > 10){
             met_username.setError("Username not be more than 10 characters!");
             met_username.requestFocus();
@@ -101,6 +109,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         if (password.length() < 6){
             met_password.setError("Password should not be less than 6!");
             met_password.requestFocus();
+            return;
+        }
+
+        if (rePassword.length() < 6){
+            met_rePassword.setError("Retype password should not be less than 6!");
+            met_rePassword.requestFocus();
+            return;
+        }
+
+        if (!password.equals(rePassword)){
+            met_rePassword.setError("Passwords do not match!");
+            met_rePassword.requestFocus();
             return;
         }
 

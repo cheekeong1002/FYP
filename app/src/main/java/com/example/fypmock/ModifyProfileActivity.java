@@ -30,8 +30,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
 
     LinearLayout normalLayout, reAuthLayout;
     String modificationArea, data;
-    TextView mtv_title, mtv_newEmail, mtv_newPassword;
-    EditText met_input, met_email, met_password, met_newEmail, met_newPassword;
+    TextView mtv_title, mtv_newEmail, mtv_newPassword, mtv_rePassword;
+    EditText met_input, met_email, met_password, met_newEmail, met_newPassword, met_rePassword;
     ProgressBar mProgressBar;
 
     @Override
@@ -50,10 +50,12 @@ public class ModifyProfileActivity extends AppCompatActivity {
 
         mtv_newEmail = findViewById(R.id.tv_newEmail);
         mtv_newPassword = findViewById(R.id.tv_newPassword);
+        mtv_rePassword = findViewById(R.id.tv_rePassword);
         met_email = findViewById(R.id.et_email);
         met_password = findViewById(R.id.et_password);
         met_newEmail = findViewById(R.id.et_newEmail);
         met_newPassword = findViewById(R.id.et_newPassword);
+        met_rePassword = findViewById(R.id.et_rePassword);
 
         modificationArea = getIntent().getStringExtra("MODIFY_AREA");
         data = getIntent().getStringExtra("DATA");
@@ -76,6 +78,16 @@ public class ModifyProfileActivity extends AppCompatActivity {
             }
         });
 
+        Button cancel_btn = findViewById(R.id.btn_cancel);
+        cancel_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("MODIFY_AREA", "");
+                finish();
+            }
+        });
+
         if (modificationArea.equals("Email")){
             normalLayout.setVisibility(View.GONE);
             reAuthLayout.setVisibility(View.VISIBLE);
@@ -88,6 +100,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
             reAuthLayout.setVisibility(View.VISIBLE);
             mtv_newPassword.setVisibility(View.VISIBLE);
             met_newPassword.setVisibility(View.VISIBLE);
+            mtv_rePassword.setVisibility(View.VISIBLE);
+            met_rePassword.setVisibility(View.VISIBLE);
         }
 
         updateUI();
@@ -97,6 +111,7 @@ public class ModifyProfileActivity extends AppCompatActivity {
         String email = met_email.getText().toString().trim();
         String password = met_password.getText().toString().trim();
         String newPassword = met_newPassword.getText().toString().trim();
+        String rePassword = met_rePassword.getText().toString().trim();
 
         if(email.isEmpty()){
             met_email.setError("Email is required!");
@@ -131,6 +146,24 @@ public class ModifyProfileActivity extends AppCompatActivity {
         if (newPassword.length() < 6){
             met_newPassword.setError("New Password should not be less than 6!");
             met_newPassword.requestFocus();
+            return;
+        }
+
+        if(rePassword.isEmpty()){
+            met_rePassword.setError("Retype password is required!");
+            met_rePassword.requestFocus();
+            return;
+        }
+
+        if (rePassword.length() < 6){
+            met_rePassword.setError("Retype Password should not be less than 6!");
+            met_rePassword.requestFocus();
+            return;
+        }
+
+        if (!newPassword.equals(rePassword)){
+            met_rePassword.setError("Passwords do not match!");
+            met_rePassword.requestFocus();
             return;
         }
 

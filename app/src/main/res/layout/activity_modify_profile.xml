@@ -140,6 +140,31 @@
             android:layout_marginEnd="15dp"
             android:inputType="textPassword"
             android:hint="@string/new_password"/>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_rePassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/retype_password"
+            android:textColor="@color/mint"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:visibility="gone"
+            android:id="@+id/et_rePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:inputType="textPassword"
+            android:hint="@string/retype_password"/>
     </LinearLayout>
 
     <Button
@@ -152,6 +177,18 @@
         android:layout_gravity="center"
         android:background="@drawable/default_button_bg"
         android:text="@string/save_changes"
+        android:textColor="@color/white"/>
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_gravity="center"
+        android:background="@drawable/red_button_bg"
+        android:text="@string/cancel"
         android:textColor="@color/white"/>
 
     <ProgressBar
