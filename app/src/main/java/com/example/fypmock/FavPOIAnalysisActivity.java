@@ -228,18 +228,9 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position + 2 < 6){
-                    mPieChart.setVisibility(View.VISIBLE);
-                    mBarChart.setVisibility(View.GONE);
-                    setupPieChart();
-                    loadPieChartData(position + 2);
-
-                }else{
-                    mPieChart.setVisibility(View.GONE);
-                    mBarChart.setVisibility(View.VISIBLE);
-                    loadBarChartData(position + 2);
-                }
-
+                mPieChart.setVisibility(View.GONE);
+                mBarChart.setVisibility(View.VISIBLE);
+                loadBarChartData(position + 2);
             }
 
             @Override
