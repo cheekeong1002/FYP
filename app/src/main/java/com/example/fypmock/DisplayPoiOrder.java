@@ -165,13 +165,57 @@ public class DisplayPoiOrder extends GetBuildingID {
                 break;
 
             case "Follow sequence + return to start":
-                orderToDisplay.clear();
-                orderToDisplay.addAll(selectedPoiList);
-                orderToDisplay.add("Starting Point");
-                adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
-                mlv_fav.setAdapter(adapter);
-                mProgressBar.setVisibility(View.GONE);
-                mButtonLayout.setVisibility(View.VISIBLE);
+                if (!locationManager.isRunning()){
+                    locationListener = new LocationListener() {
+                        @Override
+                        public void onLocationChanged(@NonNull Location location) {
+                            SitumSdk.locationManager().removeUpdates(locationListener);
+
+                            firstLocation = location;
+                            orderToDisplay.clear();
+                            orderToDisplay.addAll(selectedPoiList);
+                            orderToDisplay.add("Starting Point");
+                            adapter = new DisplayPoiAdapter(DisplayPoiOrder.this, R.layout.item, orderToDisplay);
+                            mlv_fav.setAdapter(adapter);
+                            mProgressBar.setVisibility(View.GONE);
+                            mButtonLayout.setVisibility(View.VISIBLE);
+
+                            navigation_btn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(DisplayPoiOrder.this, Navigation.class);
+                                    intent.putExtra("USER_LOCATION", firstLocation);
+                                    intent.putExtra("SELECTED_POIS", orderToDisplay);
+                                    DisplayPoiOrder.this.startActivity(intent);
+                                }
+                            });
+
+                            mProgressBar.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onStatusChanged(@NonNull LocationStatus locationStatus) {
+                            Log.d("TEST", "onStatusChanged(): " + locationStatus);
+                        }
+
+                        @Override
+                        public void onError(@NonNull Error error) {
+                            Log.e("TEST", "onError(): " + error.getMessage());
+                        }
+
+                    };
+
+                    LocationRequest locationRequest = new LocationRequest.Builder()
+                            .buildingIdentifier(buildingID)
+                            .useDeadReckoning(true)
+                            .build();
+
+                    SitumSdk.locationManager().requestLocationUpdates(locationRequest, locationListener);
+
+                }else{
+                    SitumSdk.locationManager().removeUpdates(locationListener);
+                }
+
                 break;
 
             case "Shortest path":
@@ -236,7 +280,6 @@ public class DisplayPoiOrder extends GetBuildingID {
 
         for (String[] combination : allCombinations){
             double totalDistance = 0;
-            Log.d("TAG", "combination: " + Arrays.toString(combination));
 
             for (int i=0; i<combination.length; i++){
                 if (i==0){
@@ -258,7 +301,6 @@ public class DisplayPoiOrder extends GetBuildingID {
                     }
                 }
             }
-            Log.d("TAG", "getShortestPath: " + totalDistance);
 
             if (shortestDistance == 0){
                 shortestDistance = totalDistance;
@@ -285,13 +327,22 @@ public class DisplayPoiOrder extends GetBuildingID {
             combCounter++;
         }
 
-        Log.d("TAG", "shortest path: " + shortestPath);
 
         orderToDisplay.clear();
         orderToDisplay.addAll(shortestPath);
         adapter = new DisplayPoiAdapter(this, R.layout.item, orderToDisplay);
         mlv_fav.setAdapter(adapter);
         mProgressBar.setVisibility(View.GONE);
+
+        navigation_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DisplayPoiOrder.this, Navigation.class);
+                intent.putExtra("USER_LOCATION", firstLocation);
+                intent.putExtra("SELECTED_POIS", orderToDisplay);
+                DisplayPoiOrder.this.startActivity(intent);
+            }
+        });
         mButtonLayout.setVisibility(View.VISIBLE);
     }
 

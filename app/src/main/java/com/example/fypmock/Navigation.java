@@ -120,6 +120,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
     private TextView mtvDirection;
     private static boolean pauseNav = false;
     private static boolean waitPostFloorChg = false;
+    private static boolean floorChanged = false;
     private int outRouteCounter = 0;
     private boolean recalculatingRoute = false;
     private static Route recalculatedF1;
@@ -213,6 +214,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
         lastF1Route = null;
         lastF2Route = null;
         waitPostFloorChg = false;
+        floorChanged = false;
         recalculatingRoute = false;
         outRouteCounter = 0;
         recalculatedF1 = null;
@@ -234,8 +236,8 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
         progressBar.setVisibility(ProgressBar.GONE);
         startNavBtn.setVisibility(View.VISIBLE);
         FloatingActionButton button2 = findViewById(R.id.button2);
-        //FloatingActionButton button = findViewById(R.id.start_button);
 
+        //set the initial positioning floor id
         if (currentPoiPost == 1){
             initialPositioningFloorId = firstLocation.getFloorIdentifier();
         }else{
@@ -252,21 +254,36 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
             @Override
             public void onSuccess(List<Poi> pois) {
                 buildingPoi.addAll(pois);
-                for (Poi poi : buildingPoi){
-                    if (poi.getName().equals(selectedPoiNames.get(currentPoiPost - 1))){
-                        destinationPoi = poi; //get poi of current destination
 
-                        if (initialPositioningFloorId.equals(destinationPoi.getFloorIdentifier())){
-                            floorSpan = 1;
-                        }else{
-                            floorSpan = 2;
+                if (selectedPoiNames.get(currentPoiPost - 1).equals("Starting Point")){
+                    destinationPoi = null;
+
+                    if (initialPositioningFloorId.equals(firstLocation.getFloorIdentifier())){
+                        floorSpan = 1;
+                    }else{
+                        floorSpan = 2;
+                    }
+
+                    plotMarkers();
+                }else{
+                    for (Poi poi : buildingPoi){
+                        if (poi.getName().equals(selectedPoiNames.get(currentPoiPost - 1))){
+                            destinationPoi = poi; //get poi of current destination
+
+                            if (initialPositioningFloorId.equals(destinationPoi.getFloorIdentifier())){
+                                floorSpan = 1;
+                            }else{
+                                floorSpan = 2;
+                            }
+
+                            plotMarkers();
+
+                            break;
                         }
-                        Log.d(TAG, "floors: " + floorSpan);
-
-                        plotMarkers();
-                        break;
                     }
                 }
+
+
             }
 
             @Override
@@ -377,8 +394,9 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                 }
             }
 
-            if (waitPostFloorChg){
+            if (waitPostFloorChg && floorChanged){
                 Log.d(TAG, "map has been drawn");
+                pauseNav = false;
                 waitPostFloorChg = false;
             }
         }
@@ -442,7 +460,11 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
         //set from and to to initial position and final destination respectively
         from = initialPost;
-        to = destinationPoi.getPosition();
+        if (destinationPoi == null){
+            to = firstLocation.getPosition();
+        }else{
+            to = destinationPoi.getPosition();
+        }
 
         if (firstPreview){
             Log.d(TAG, "entered");
@@ -461,9 +483,9 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                 initialLocMarker.setVisible(true);
             }
 
-            if (currentSelectedFloorID.equals(destinationPoi.getFloorIdentifier())){
+            if (currentSelectedFloorID.equals(to.getFloorIdentifier())){
                 if (floorSpan == 2
-                        && !initialPost.getFloorIdentifier().equals(destinationPoi.getFloorIdentifier())){
+                        && !initialPost.getFloorIdentifier().equals(to.getFloorIdentifier())){
                     for (Poi poi : buildingPoi){
                         if (poi.getName().equals("Stair")
                                 && poi.getFloorIdentifier().equals(currentSelectedFloorID)){
@@ -480,8 +502,8 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                     stairMarker.setVisible(false);
                 }
 
-                LatLng destinationLatLng = new LatLng(destinationPoi.getCoordinate().getLatitude(),
-                        destinationPoi.getCoordinate().getLongitude());
+                LatLng destinationLatLng = new LatLng(to.getCoordinate().getLatitude(),
+                        to.getCoordinate().getLongitude());
 
                 destinationMarker.setPosition(destinationLatLng);
                 destinationMarker.setVisible(true);
@@ -526,9 +548,9 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                 initialLocMarker.setVisible(false);
             }
 
-            if (currentSelectedFloorID.equals(destinationPoi.getFloorIdentifier())){
+            if (currentSelectedFloorID.equals(to.getFloorIdentifier())){
                 if (floorSpan == 2
-                        && !initialPost.getFloorIdentifier().equals(destinationPoi.getFloorIdentifier())){
+                        && !initialPost.getFloorIdentifier().equals(to.getFloorIdentifier())){
                     for (Poi poi : buildingPoi){
                         if (poi.getName().equals("Stair")
                                 && poi.getFloorIdentifier().equals(currentSelectedFloorID)){
@@ -545,8 +567,8 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                     stairMarker.setVisible(false);
                 }
 
-                LatLng destinationLatLng = new LatLng(destinationPoi.getCoordinate().getLatitude(),
-                        destinationPoi.getCoordinate().getLongitude());
+                LatLng destinationLatLng = new LatLng(to.getCoordinate().getLatitude(),
+                        to.getCoordinate().getLongitude());
 
                 destinationMarker.setPosition(destinationLatLng);
                 destinationMarker.setVisible(true);
@@ -657,56 +679,36 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
         });
     }
 
-    private void toNextDest(){
-        if (floorSpan == 1){
-            //end navigation if all destinations have been visited
-            if (currentPoiPost == selectedPoiNames.size()){
-                reset(true);
+    private void prepareNextPoi(){
+        if (currentPoiPost == selectedPoiNames.size()){
+            reset(true);
 
-                //alert dialog to inform user of the end of navigation
-                AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
-                builder.setMessage("Hooray! You have reached the final destination!\nPress 'OK' to return back to home!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //return back to home page after pressing 'OK'
-                                Intent myIntent = new Intent(Navigation.this, Menu.class);
-                                Navigation.this.startActivity(myIntent);
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }else{
-                currentPoiPost++; //increment current poi position
-                Log.d(TAG, "incremented" + currentPoiPost);
-                reset(false);
-
-                //alert dialog to inform user that destination has been reached
-                AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
-                builder.setMessage("Hooray! You have reached your destination!\nPress 'OK' to continue!")
-                        .setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                //setup map for next destination
-                                setup();
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-            }
-        }else if (floorSpan == 2){
-            Log.d(TAG, "waiting for floor change");
-            waitPostFloorChg = true;
-            navReq = null;
-            navStarted = false;
-            SitumSdk.navigationManager().removeUpdates();
-
+            //alert dialog to inform user of the end of navigation
             AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
-            builder.setMessage("You have reached the Stairs!\nPlease navigate to the next floor to continue navigation to final destination!")
+            builder.setMessage("Hooray! You have reached the final destination!\nPress 'OK' to return back to home!")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
-                            mtvDirection.setText("Please navigate to next floor!");
+                            //return back to home page after pressing 'OK'
+                            Intent myIntent = new Intent(Navigation.this, Menu.class);
+                            Navigation.this.startActivity(myIntent);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }else{
+            currentPoiPost++; //increment current poi position
+            Log.d(TAG, "incremented" + currentPoiPost);
+            reset(false);
+
+            //alert dialog to inform user that destination has been reached
+            AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
+            builder.setMessage("Hooray! You have reached your destination!\nPress 'OK' to continue!")
+                    .setCancelable(false)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //setup map for next destination
+                            setup();
                         }
                     });
             AlertDialog alert = builder.create();
@@ -714,16 +716,59 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
         }
     }
 
+    private void toNextDest(){
+        Point to;
+        if (destinationPoi == null){
+            to = firstLocation.getPosition();
+        }else{
+            to = destinationPoi.getPosition();
+        }
+        if (floorSpan == 1){
+            //end navigation if all destinations have been visited
+            prepareNextPoi();
+
+        }else if (floorSpan == 2){
+            if (lastPositioningFloorId.equals(to.getFloorIdentifier())){
+                prepareNextPoi();
+            }else{
+                Log.d(TAG, "waiting for floor change");
+                waitPostFloorChg = true;
+                navReq = null;
+                navStarted = false;
+                SitumSdk.navigationManager().removeUpdates();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(Navigation.this);
+                builder.setMessage("You have reached the Stairs!\nPlease navigate to the next floor to continue navigation to final destination!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                mtvDirection.setText("Please navigate to next floor!");
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+
+        }
+    }
+
     private void recalculateRoute(){
+        Point to;
         navReq = null;
         navStarted = false;
         SitumSdk.navigationManager().removeUpdates();
 
+        if (destinationPoi == null){
+            to = firstLocation.getPosition();
+        }else{
+            to = destinationPoi.getPosition();
+        }
+
         if (floorSpan == 1){
-            setRoute(lastLocation.getPosition(), destinationPoi.getPosition());
+            setRoute(lastLocation.getPosition(), to);
         }else if (floorSpan == 2){
-            if (lastLocation.getFloorIdentifier().equals(destinationPoi.getFloorIdentifier())){
-                setRoute(lastLocation.getPosition(), destinationPoi.getPosition());
+            if (lastLocation.getFloorIdentifier().equals(to.getFloorIdentifier())){
+                setRoute(lastLocation.getPosition(), to);
             }else{
                 for (Poi x : buildingPoi){
                     if (x.getName().equals("Stair") && x.getFloorIdentifier().equals(lastLocation.getFloorIdentifier())){
@@ -773,16 +818,14 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                         Log.d(TAG, "waiting for floor change!");
                     }
                     if (waitPostFloorChg
-                            && !location.getFloorIdentifier().equals(lastLocation.getFloorIdentifier())){
-
+                            //&& !location.getFloorIdentifier().equals(lastLocation.getFloorIdentifier())){
+                            && !location.getFloorIdentifier().equals(lastLocation.getFloorIdentifier())
+                            && !floorChanged){
+                        floorChanged = true;
+                        Toast.makeText(Navigation.this, "floor changed!", Toast.LENGTH_SHORT).show();
                         onPostFloorChanged();
                     }
 
-                    return;
-                }
-
-                if (location.getQuality().equals(Location.Quality.LOW)){
-                    Log.d(TAG, "Quality is too low");
                     return;
                 }
 
@@ -816,7 +859,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
                         navReq = new NavigationRequest.Builder()
                                 .route(route)
-                                .distanceToGoalThreshold(100d)
+                                .distanceToGoalThreshold(150d)
                                 .outsideRouteThreshold(10d)
                                 .build();
 
@@ -830,11 +873,11 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
                         navReq = new NavigationRequest.Builder()
                                 .route(route)
-                                .distanceToGoalThreshold(100d)
+                                .distanceToGoalThreshold(150d)
                                 .outsideRouteThreshold(10d)
                                 .build();
-
                     }
+
 
                     navDescLayout.setVisibility(View.VISIBLE);
                     startNavigation();

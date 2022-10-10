@@ -75,8 +75,8 @@
             android:label="Preview Map" />
         <activity
             android:name=".Navigation"
-            android:label="AnimatePositionActivity"
-            android:parentActivityName=".Test" />
+            android:label="Navigation"
+            android:parentActivityName=".SelectPoi" />
         <activity
             android:name=".FavPOIAnalysisActivity"
             android:label="Favourite POI Analysis"
