@@ -314,14 +314,6 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
     }
 
     private void setRoute(Point from, Point to){
-//        if (firstPreview){
-//            for (Poi x : buildingPoi){
-//                if (x.getName().equals("Stair") && x.getFloorIdentifier().equals(FIRST_FLOOR_ID)){
-//                    from = x.getPosition();
-//                }
-//            }
-//        }
-
         DirectionsRequest directionsRequest = new DirectionsRequest.Builder()
                 .from(from, null)
                 .to(to)
@@ -369,7 +361,6 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
             if (route.getSegments().get(0).getFloorIdentifier().equals(FIRST_FLOOR_ID)){
                 if (recalculatingRoute){
-                    Log.d(TAG, "cahnged recalculating");
                     outRouteCounter = 0;
                     recalculatingRoute = false;
                     pauseNav = false;
@@ -650,7 +641,6 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
         SitumSdk.navigationManager().requestNavigationUpdates(navReq, new NavigationListener() {
             @Override
             public void onDestinationReached() {
-                Log.d(TAG, "onDestinationReached: ");
                 mtvDirection.setText("Arrived");
                 pauseNav = true;
                 toNextDest();
@@ -659,13 +649,11 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
             @Override
             public void onProgress(NavigationProgress navigationProgress) {
                 Context context = getApplicationContext();
-                Log.d(TAG, "onProgress: " + navigationProgress.getCurrentIndication().toText(context));
                 mtvDirection.setText(navigationProgress.getCurrentIndication().toText(context));
             }
 
             @Override
             public void onUserOutsideRoute() {
-                Log.d(TAG, "onUserOutsideRoute: ");
                 mtvDirection.setText("Outside of the route");
                 outRouteCounter++;
                 if (outRouteCounter >= 5){
@@ -831,8 +819,6 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
 
                 current = location; //store current location of user in current variable
                 lastLocation = location;
-                Log.d(TAG, "current" + current);
-                Log.d(TAG, "location" + lastLocation);
 
                 //get floor user currently located in
                 String currentFloorId = location.getFloorIdentifier();
