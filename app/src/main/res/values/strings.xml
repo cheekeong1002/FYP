@@ -42,7 +42,7 @@
     <string name="new_password">New Password</string>
     <string name="preview_map">Preview Map</string>
     <string name="end_preview">End Preview</string>
-    <string name="fav_analysis">Favourite Analysis</string>
+    <string name="fav_analysis">Favourite POI Analysis</string>
     <string name="total_poi_to_display">"Total POIs to display: "</string>
     <string name="retype_password">Retype Password</string>
     <string name="welcome_message">Indoor navigation to navigate through the mall hassle free!</string>
@@ -50,4 +50,5 @@
     <string name="guideUser">Start planning your navigation now!</string>
     <string name="welcome_user">Welcome!</string>
     <string name="get_started">Get Started</string>
+    <string name="visited_analysis">Visited POI Analysis</string>
 </resources>

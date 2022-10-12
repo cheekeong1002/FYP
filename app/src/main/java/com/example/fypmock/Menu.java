@@ -37,7 +37,6 @@ public class Menu extends AppCompatActivity {
     private FirebaseUser user;
     private DatabaseReference ref;
     private String userID, userType;
-    private Group userGroup, adminGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +99,11 @@ public class Menu extends AppCompatActivity {
                     if (userProfile != null){
                         userType = userProfile.getType();
                         if (!userType.equals("user")){
-                            for (int x = 0; x < 5; x++){
+                            for (int x = 1; x < 5; x++){
                                 navigationView.getMenu().getItem(x).setVisible(false);
                             }
                             navigationView.getMenu().getItem(5).setVisible(true);
+                            navigationView.getMenu().getItem(6).setVisible(true);
                         }
                     }
                 }
@@ -115,10 +115,11 @@ public class Menu extends AppCompatActivity {
             });
         }else{
             if (!userType.equals("user")){
-                for (int x = 0; x < 5; x++){
+                for (int x = 1; x < 5; x++){
                     navigationView.getMenu().getItem(x).setVisible(false);
                 }
                 navigationView.getMenu().getItem(5).setVisible(true);
+                navigationView.getMenu().getItem(6).setVisible(true);
             }
         }
 
@@ -148,8 +149,13 @@ public class Menu extends AppCompatActivity {
                         startActivity(intent);
                         break;
 
-                    case "Favourite Analysis":
+                    case "Favourite POI Analysis":
                         intent = new Intent(Menu.this, FavPOIAnalysisActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    case "Visited POI Analysis":
+                        intent = new Intent(Menu.this, VisitedPOIAnalysisActivity.class);
                         startActivity(intent);
                         break;
 

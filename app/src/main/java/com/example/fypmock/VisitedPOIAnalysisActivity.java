@@ -27,6 +27,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class VisitedPOIAnalysisActivity extends AppCompatActivity {
 
@@ -56,6 +57,7 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
 
     private void loadBarChartData(int totalFavToLoad){
         int counter = 0;
+        labelNames.clear();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
 
         for (String[] favPoi: orderToDisplay){
@@ -91,12 +93,7 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
             }
         };
 
-        YAxis yAxisLeft = mBarChart.getAxisLeft();
-        YAxis yAxisRight = mBarChart.getAxisRight();
         BarData mBarDate = mBarChart.getBarData();
-
-        yAxisLeft.setValueFormatter(vf);
-        yAxisRight.setValueFormatter(vf);
         mBarDate.setValueFormatter(vf);
 
         XAxis xAxis = mBarChart.getXAxis();
@@ -112,18 +109,18 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
         mBarChart.invalidate();
     }
 
-    private void countFavPoi(){
+    private void countVisitedPoi(){
         int highestTotal = 0;
         int highestPOIPost = 0;
 
-        for (String[] singleUserFav: userVisitedPoi){
-            for (String singleFavPOI: singleUserFav){
-                if (!allVisitedPoi.contains(singleFavPOI)){
-                    allVisitedPoi.add(singleFavPOI);
+        for (String[] singleUserVisited: userVisitedPoi){
+            for (String singleVisitedPOI: singleUserVisited){
+                if (!allVisitedPoi.contains(singleVisitedPOI)){
+                    allVisitedPoi.add(singleVisitedPOI);
                     visitedPoiCounter.add(1);
                 }else{
                     for (int x = 0; x < allVisitedPoi.size(); x++){
-                        if (allVisitedPoi.get(x).equals(singleFavPOI)){
+                        if (allVisitedPoi.get(x).equals(singleVisitedPOI)){
                             int currentTotal = visitedPoiCounter.get(x);
                             visitedPoiCounter.set(x, currentTotal + 1);
                             break;
@@ -149,10 +146,11 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
             highestPOIPost = 0;
 
             String[] tempArray = {Float.toString(totalPoi), favPoiName};
+            Log.d("TAG", "countVisitedPoi: " + Arrays.toString(tempArray));
             orderToDisplay.add(tempArray);
         }
 
-        for (int x=2; x < orderToDisplay.size(); x++){
+        for (int x=1; x < orderToDisplay.size() + 1; x++){
             topNumDisplay.add(x);
         }
 
@@ -163,7 +161,7 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mBarChart.setVisibility(View.VISIBLE);
-                loadBarChartData(position + 2);
+                loadBarChartData(position + 1);
             }
 
             @Override
@@ -174,19 +172,23 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
     }
 
     private void getAllVisitedPOI(){
-        mDatabase.getReference("Users").addValueEventListener(new ValueEventListener() {
+        mDatabase.getReference("History").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    User userProfile = dataSnapshot.getValue(User.class);
-                    if (!userProfile.getFavPoiNames().equals("")){
-                        String[] visitedPoiNames = userProfile.getFavPoiNames().split(", ");
-                        userVisitedPoi.add(visitedPoiNames);
+                    int counter = 0;
+                    String tempArray[] = new String[(int) dataSnapshot.getChildrenCount()];
+
+                    for (DataSnapshot data: dataSnapshot.getChildren()){
+                        tempArray[counter] = (String) data.getValue();
+                        counter++;
                     }
+
+                    userVisitedPoi.add(tempArray);
                 }
 
                 if (userVisitedPoi.size() > 1){
-                    countFavPoi();
+                    countVisitedPoi();
                 }else{
                     Toast.makeText(VisitedPOIAnalysisActivity.this, "No data available!", Toast.LENGTH_SHORT).show();
                 }

@@ -7,6 +7,7 @@
         android:id="@+id/user_group"
         android:checkableBehavior="single">
         <item
+            android:checkable="true"
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="@string/home" />
@@ -33,9 +34,18 @@
 
         <item
             android:visible="false"
+            android:checkable="false"
+            android:id="@+id/visited_chart"
+            android:icon="@drawable/ic_baseline_bar_chart"
+            android:title="@string/visited_analysis" />
+
+        <item
+            android:visible="false"
+            android:checkable="false"
             android:id="@+id/fav_chart"
             android:icon="@drawable/ic_baseline_bar_chart"
             android:title="@string/fav_analysis" />
+
     </group>
 
     <group android:checkableBehavior="single">

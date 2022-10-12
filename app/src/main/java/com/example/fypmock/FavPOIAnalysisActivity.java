@@ -70,6 +70,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
 
     private void loadBarChartData(int totalFavToLoad){
         int counter = 0;
+        labelNames.clear();
         ArrayList<BarEntry> barEntries = new ArrayList<>();
 
         for (String[] favPoi: orderToDisplay){
@@ -105,13 +106,8 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             }
         };
 
-        YAxis yAxisLeft = mBarChart.getAxisLeft();
-        YAxis yAxisRight = mBarChart.getAxisRight();
-        BarData mBarDate = mBarChart.getBarData();
-
-        yAxisLeft.setValueFormatter(vf);
-        yAxisRight.setValueFormatter(vf);
-        mBarDate.setValueFormatter(vf);
+        BarData mBarData = mBarChart.getBarData();
+        mBarData.setValueFormatter(vf);
 
         XAxis xAxis = mBarChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labelNames));
@@ -166,7 +162,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             orderToDisplay.add(tempArray);
         }
 
-        for (int x=2; x < orderToDisplay.size(); x++){
+        for (int x=1; x < orderToDisplay.size(); x++){
             topNumDisplay.add(x);
         }
 
@@ -177,7 +173,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mBarChart.setVisibility(View.VISIBLE);
-                loadBarChartData(position + 2);
+                loadBarChartData(position + 1);
             }
 
             @Override
