@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -41,11 +43,19 @@ import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+
 import es.situm.sdk.model.directions.Route;
 import es.situm.sdk.model.directions.RouteSegment;
 import es.situm.sdk.model.cartography.Point;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import es.situm.sdk.SitumSdk;
@@ -668,6 +678,19 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
     }
 
     private void prepareNextPoi(){
+        FirebaseDatabase.getInstance().getReference("History")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(String.valueOf(Calendar.getInstance().getTime()))
+                .setValue(destinationPoi.getName())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (!task.isSuccessful()){
+                            Toast.makeText(Navigation.this, "failed to navigated POI to history", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
         if (currentPoiPost == selectedPoiNames.size()){
             reset(true);
 
@@ -684,6 +707,7 @@ public class Navigation extends GetBuildingID implements OnMapReadyCallback {
                     });
             AlertDialog alert = builder.create();
             alert.show();
+
         }else{
             currentPoiPost++; //increment current poi position
             Log.d(TAG, "incremented" + currentPoiPost);

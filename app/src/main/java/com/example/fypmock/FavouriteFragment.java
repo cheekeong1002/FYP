@@ -97,9 +97,9 @@ public class FavouriteFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
 
         SharedPreferences prefs = getActivity().getSharedPreferences("SelectedPOIs", getActivity().MODE_PRIVATE);
-        JSONArray jsonArray = null;
+        JSONArray jsonArray = new JSONArray();
         try {
-            jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", null));
+            jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }

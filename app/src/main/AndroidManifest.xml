@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".VisitedPOIAnalysisActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -80,7 +81,7 @@
         <activity
             android:name=".FavPOIAnalysisActivity"
             android:label="Favourite POI Analysis"
-            android:parentActivityName=".Menu"/>
+            android:parentActivityName=".Menu" />
         <activity
             android:name=".Test2"
             android:parentActivityName=".Test" />

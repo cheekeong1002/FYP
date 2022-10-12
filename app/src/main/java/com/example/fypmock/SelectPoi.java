@@ -141,9 +141,9 @@ public class SelectPoi extends AppCompatActivity implements MyDialogFragmentList
                     favPoiList.addAll(Arrays.asList(tempList));
 
                     SharedPreferences prefs = getSharedPreferences("SelectedPOIs", MODE_PRIVATE);
-                    JSONArray jsonArray = null;
+                    JSONArray jsonArray = new JSONArray();
                     try {
-                        jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", null));
+                        jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", ""));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

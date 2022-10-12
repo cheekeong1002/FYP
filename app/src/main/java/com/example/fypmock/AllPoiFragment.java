@@ -104,12 +104,13 @@ public class AllPoiFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
 
         SharedPreferences prefs = getActivity().getSharedPreferences("SelectedPOIs", getActivity().MODE_PRIVATE);
-        JSONArray jsonArray = null;
+        JSONArray jsonArray = new JSONArray();
         try {
-            jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", null));
+            jsonArray = new JSONArray(prefs.getString("SelectedPOIsKey", ""));
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.d("TAG", "onViewCreated: " + jsonArray);
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 selectedPOIs.add(jsonArray.get(i).toString());

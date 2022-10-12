@@ -6,66 +6,52 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class FavPOIAnalysisActivity extends AppCompatActivity {
+public class VisitedPOIAnalysisActivity extends AppCompatActivity {
 
     private FirebaseDatabase mDatabase;
 
     private Spinner mSpinner;
     private BarChart mBarChart;
     private final ArrayList<Integer> topNumDisplay = new ArrayList<>();
-    private final ArrayList<String[]> userFavPoi = new ArrayList<>();
-    private final ArrayList<String> allFavPoi = new ArrayList<>();
-    private final ArrayList<Integer> favPoiCounter = new ArrayList<>();
+    private final ArrayList<String[]> userVisitedPoi = new ArrayList<>();
+    private final ArrayList<String> allVisitedPoi = new ArrayList<>();
+    private final ArrayList<Integer> visitedPoiCounter = new ArrayList<>();
     private final ArrayList<String[]> orderToDisplay = new ArrayList<>();
     private final ArrayList<String> labelNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fav_p_o_i_analysis);
+        setContentView(R.layout.activity_visited_p_o_i_analysis);
 
         mDatabase = FirebaseDatabase.getInstance();
 
         mSpinner = findViewById(R.id.topNumSelector);
-        mBarChart = findViewById(R.id.favBarChart);
+        mBarChart = findViewById(R.id.visitedPoiBarChart);
 
-        getAllFavouritePOI();
+        getAllVisitedPOI();
     }
 
     private void loadBarChartData(int totalFavToLoad){
@@ -130,16 +116,16 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         int highestTotal = 0;
         int highestPOIPost = 0;
 
-        for (String[] singleUserFav: userFavPoi){
+        for (String[] singleUserFav: userVisitedPoi){
             for (String singleFavPOI: singleUserFav){
-                if (!allFavPoi.contains(singleFavPOI)){
-                    allFavPoi.add(singleFavPOI);
-                    favPoiCounter.add(1);
+                if (!allVisitedPoi.contains(singleFavPOI)){
+                    allVisitedPoi.add(singleFavPOI);
+                    visitedPoiCounter.add(1);
                 }else{
-                    for (int x = 0; x < allFavPoi.size(); x++){
-                        if (allFavPoi.get(x).equals(singleFavPOI)){
-                            int currentTotal = favPoiCounter.get(x);
-                            favPoiCounter.set(x, currentTotal + 1);
+                    for (int x = 0; x < allVisitedPoi.size(); x++){
+                        if (allVisitedPoi.get(x).equals(singleFavPOI)){
+                            int currentTotal = visitedPoiCounter.get(x);
+                            visitedPoiCounter.set(x, currentTotal + 1);
                             break;
                         }
                     }
@@ -147,18 +133,18 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             }
         }
 
-        while (favPoiCounter.size() != 0 && orderToDisplay.size() <= 10){
-            for (int x = 0; x < favPoiCounter.size(); x++){
-                if (favPoiCounter.get(x) > highestTotal){
-                    highestTotal = favPoiCounter.get(x);
+        while (visitedPoiCounter.size() != 0 && orderToDisplay.size() <= 10){
+            for (int x = 0; x < visitedPoiCounter.size(); x++){
+                if (visitedPoiCounter.get(x) > highestTotal){
+                    highestTotal = visitedPoiCounter.get(x);
                     highestPOIPost = x;
                 }
             }
 
-            float totalPoi = favPoiCounter.get(highestPOIPost).floatValue();
-            String favPoiName = allFavPoi.get(highestPOIPost);
-            favPoiCounter.remove(highestPOIPost);
-            allFavPoi.remove(highestPOIPost);
+            float totalPoi = visitedPoiCounter.get(highestPOIPost).floatValue();
+            String favPoiName = allVisitedPoi.get(highestPOIPost);
+            visitedPoiCounter.remove(highestPOIPost);
+            allVisitedPoi.remove(highestPOIPost);
             highestTotal = 0;
             highestPOIPost = 0;
 
@@ -187,28 +173,28 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         });
     }
 
-    private void getAllFavouritePOI(){
+    private void getAllVisitedPOI(){
         mDatabase.getReference("Users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot: snapshot.getChildren()){
                     User userProfile = dataSnapshot.getValue(User.class);
                     if (!userProfile.getFavPoiNames().equals("")){
-                        String[] favPoiNames = userProfile.getFavPoiNames().split(", ");
-                        userFavPoi.add(favPoiNames);
+                        String[] visitedPoiNames = userProfile.getFavPoiNames().split(", ");
+                        userVisitedPoi.add(visitedPoiNames);
                     }
                 }
 
-                if (userFavPoi.size() > 1){
+                if (userVisitedPoi.size() > 1){
                     countFavPoi();
                 }else{
-                    Toast.makeText(FavPOIAnalysisActivity.this, "No data available!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(VisitedPOIAnalysisActivity.this, "No data available!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(FavPOIAnalysisActivity.this, "Failed to get user data!", Toast.LENGTH_LONG).show();
+                Toast.makeText(VisitedPOIAnalysisActivity.this, "Failed to get user data!", Toast.LENGTH_LONG).show();
             }
         });
     }

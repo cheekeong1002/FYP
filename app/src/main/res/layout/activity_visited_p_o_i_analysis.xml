@@ -41,7 +41,7 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:visibility="gone"
-        android:id="@+id/favBarChart"
+        android:id="@+id/visitedPoiBarChart"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"/>
 

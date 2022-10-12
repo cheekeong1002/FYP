@@ -45,4 +45,9 @@
     <string name="fav_analysis">Favourite Analysis</string>
     <string name="total_poi_to_display">"Total POIs to display: "</string>
     <string name="retype_password">Retype Password</string>
+    <string name="welcome_message">Indoor navigation to navigate through the mall hassle free!</string>
+    <string name="copyright">©2022 TCK ALL RIGHTS RESERVED</string>
+    <string name="guideUser">Start planning your navigation now!</string>
+    <string name="welcome_user">Welcome!</string>
+    <string name="get_started">Get Started</string>
 </resources>
