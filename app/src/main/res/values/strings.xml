@@ -51,4 +51,9 @@
     <string name="welcome_user">Welcome!</string>
     <string name="get_started">Get Started</string>
     <string name="visited_analysis">Visited POI Analysis</string>
+    <string name="guideAdmin">View visisted POI analysis now!</string>
+    <string name="view_analysis">View Analysis</string>
+    <string name="create">Create</string>
+    <string name="create_admin">Create Admin</string>
+    <string name="select_privilege">Select Privilege</string>
 </resources>

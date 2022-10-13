@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,8 @@ public class Menu extends AppCompatActivity {
     private FirebaseUser user;
     private DatabaseReference ref;
     private String userID, userType;
+    private TextView mtv_guideAdmin, mtv_guideUser;
+    private Button toVisitedAnalysis_btn, toSelectPoi_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,11 @@ public class Menu extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         ref = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid();
+
+        mtv_guideUser = findViewById(R.id.tv_guideUser);
+        toSelectPoi_btn = findViewById(R.id.btn_toSelectPoi);
+        mtv_guideAdmin = findViewById(R.id.tv_guideAdmin);
+        toVisitedAnalysis_btn = findViewById(R.id.btn_toVisitedAnalysis);
 
         ref.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -104,6 +112,20 @@ public class Menu extends AppCompatActivity {
                             }
                             navigationView.getMenu().getItem(5).setVisible(true);
                             navigationView.getMenu().getItem(6).setVisible(true);
+
+                            if (userType.equals("adminHigh")){
+                                navigationView.getMenu().getItem(7).setVisible(true);
+                            }
+
+                            mtv_guideUser.setVisibility(View.GONE);
+                            toSelectPoi_btn.setVisibility(View.GONE);
+                            mtv_guideAdmin.setVisibility(View.VISIBLE);
+                            toVisitedAnalysis_btn.setVisibility(View.VISIBLE);
+                        }else{
+                            mtv_guideUser.setVisibility(View.VISIBLE);
+                            toSelectPoi_btn.setVisibility(View.VISIBLE);
+                            mtv_guideAdmin.setVisibility(View.GONE);
+                            toVisitedAnalysis_btn.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -120,6 +142,20 @@ public class Menu extends AppCompatActivity {
                 }
                 navigationView.getMenu().getItem(5).setVisible(true);
                 navigationView.getMenu().getItem(6).setVisible(true);
+
+                if (userType.equals("adminHigh")){
+                    navigationView.getMenu().getItem(7).setVisible(true);
+                }
+
+                mtv_guideUser.setVisibility(View.GONE);
+                toSelectPoi_btn.setVisibility(View.GONE);
+                mtv_guideAdmin.setVisibility(View.VISIBLE);
+                toVisitedAnalysis_btn.setVisibility(View.VISIBLE);
+            }else{
+                mtv_guideUser.setVisibility(View.VISIBLE);
+                toSelectPoi_btn.setVisibility(View.VISIBLE);
+                mtv_guideAdmin.setVisibility(View.GONE);
+                toVisitedAnalysis_btn.setVisibility(View.GONE);
             }
         }
 
@@ -156,6 +192,11 @@ public class Menu extends AppCompatActivity {
 
                     case "Visited POI Analysis":
                         intent = new Intent(Menu.this, VisitedPOIAnalysisActivity.class);
+                        startActivity(intent);
+                        break;
+
+                    case "Create Admin":
+                        intent = new Intent(Menu.this, CreateAdminActivity.class);
                         startActivity(intent);
                         break;
 

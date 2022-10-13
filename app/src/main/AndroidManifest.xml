@@ -80,10 +80,14 @@
         <activity
             android:name=".VisitedPOIAnalysisActivity"
             android:label="Visited POI Analysis"
-            android:parentActivityName=".Menu"/>
+            android:parentActivityName=".Menu" />
         <activity
             android:name=".FavPOIAnalysisActivity"
             android:label="Favourite POI Analysis"
+            android:parentActivityName=".Menu" />
+        <activity
+            android:name=".CreateAdminActivity"
+            android:label="Create Admin"
             android:parentActivityName=".Menu" />
         <activity
             android:name=".Test2"

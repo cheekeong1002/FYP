@@ -24,11 +24,21 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
         final Button toSelectPoi_btn = root.findViewById(R.id.btn_toSelectPoi);
         toSelectPoi_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectPoi.class);
+                startActivity(intent);
+            }
+        });
+
+        final Button toVisitedAnalysis_btn = root.findViewById(R.id.btn_toVisitedAnalysis);
+        toVisitedAnalysis_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), VisitedPOIAnalysisActivity.class);
                 startActivity(intent);
             }
         });

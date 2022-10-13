@@ -46,6 +46,13 @@
             android:icon="@drawable/ic_baseline_bar_chart"
             android:title="@string/fav_analysis" />
 
+        <item
+            android:visible="false"
+            android:checkable="false"
+            android:id="@+id/create_admin"
+            android:icon="@drawable/ic_baseline_add"
+            android:title="@string/create_admin" />
+
     </group>
 
     <group android:checkableBehavior="single">
