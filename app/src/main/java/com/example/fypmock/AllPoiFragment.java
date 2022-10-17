@@ -34,6 +34,7 @@ import com.google.protobuf.Value;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +48,7 @@ public class AllPoiFragment extends Fragment {
     FirebaseAuth mAuth;
 
     private AllPoiFragment.AllPoiAdapter adapter;
+    private ArrayList<String> orderDisplayPOI = new ArrayList<>();
     private ArrayList<String> selectedPOIs = new ArrayList<>();
     private ArrayList<String> data = new ArrayList<>();
     private ArrayList<String> favPoiList = new ArrayList<>();
@@ -146,58 +148,99 @@ public class AllPoiFragment extends Fragment {
                     Arrays.sort(tempFavList); //re-arrange list based on alphabet
                     favPoiList.addAll(Arrays.asList(tempFavList));
 
-                    String[] tempAllPoi = getResources().getStringArray(R.array.POIs);
-                    Arrays.sort(tempAllPoi);
-                    data.addAll(Arrays.asList(tempAllPoi));
-                    allPoiName.addAll(Arrays.asList(tempAllPoi));
-
-                    adapter = new AllPoiFragment.AllPoiAdapter(getActivity(), R.layout.item, data);
-                    mlv_fav.setAdapter(adapter);
-                    mlv_fav.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    FirebaseDatabase.getInstance().getReference("History")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                         @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            for (String poiName : selectedPOIs){
-                                if (poiName.equals(data.get(position))){
-                                    Toast.makeText(getActivity(), poiName + " has already been selected!", Toast.LENGTH_LONG).show();
-                                    return;
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (task.isSuccessful()){
+                                int counter = 0;
+                                ArrayList<String> lastVisitedPOI = new ArrayList<>();
+                                ArrayList<String> suggestedPOI = new ArrayList<>();
+
+                                for (DataSnapshot data: task.getResult().getChildren()){
+                                    lastVisitedPOI.add(data.getValue().toString());
                                 }
-                            }
 
-                            Intent dataToPass = new Intent();
-                            dataToPass.putExtra("selectedPoi", data.get(position));
-                            // Activity finished ok, return the data
-                            getActivity().setResult(Activity.RESULT_OK, dataToPass);
-                            getActivity().finish();
-                        }
-                    });
+                                Collections.reverse(lastVisitedPOI);
+                                for (String visitedPOI: lastVisitedPOI){
+                                    if (counter >= 5){
+                                        break;
+                                    }
 
-                    msv_searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                        @Override
-                        public boolean onQueryTextSubmit(String query) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onQueryTextChange(String newText) {
-                            ArrayList<String> filteredData = new ArrayList<>();
-
-                            for (String poiName : allPoiName){
-                                if (poiName.toLowerCase().contains(newText.toLowerCase())){
-                                    filteredData.add(poiName);
+                                    if (!suggestedPOI.contains(visitedPOI)){
+                                        suggestedPOI.add(visitedPOI);
+                                        counter++;
+                                    }
                                 }
-                            }
 
-                            if (filteredData.size() > 0){
-                                Collections.sort(filteredData);
-                                data.clear();
-                                data.addAll(filteredData);
-                                adapter.notifyDataSetChanged();
+                                String[] tempAllPoi = getResources().getStringArray(R.array.POIs);
+                                Arrays.sort(tempAllPoi);
+                                data.addAll(Arrays.asList(tempAllPoi));
+                                allPoiName.addAll(Arrays.asList(tempAllPoi));
+                                Collections.reverse(suggestedPOI);
+
+                                for (String poiName: suggestedPOI){
+                                    data.remove(poiName);
+                                    allPoiName.remove(poiName);
+                                    data.add(0, poiName);
+                                    allPoiName.add(0, poiName);
+                                }
+                                orderDisplayPOI.addAll(allPoiName);
+
+                                adapter = new AllPoiFragment.AllPoiAdapter(getActivity(), R.layout.item, data);
+                                mlv_fav.setAdapter(adapter);
+                                mlv_fav.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        for (String poiName : selectedPOIs){
+                                            if (poiName.equals(data.get(position))){
+                                                Toast.makeText(getActivity(), poiName + " has already been selected!", Toast.LENGTH_LONG).show();
+                                                return;
+                                            }
+                                        }
+
+                                        Intent dataToPass = new Intent();
+                                        dataToPass.putExtra("selectedPoi", data.get(position));
+                                        // Activity finished ok, return the data
+                                        getActivity().setResult(Activity.RESULT_OK, dataToPass);
+                                        getActivity().finish();
+                                    }
+                                });
+
+                                msv_searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                                    @Override
+                                    public boolean onQueryTextSubmit(String query) {
+                                        return false;
+                                    }
+
+                                    @Override
+                                    public boolean onQueryTextChange(String newText) {
+                                        if (newText.equals("")){
+                                            data.clear();
+                                            data.addAll(orderDisplayPOI);
+                                        }else{
+                                            ArrayList<String> filteredData = new ArrayList<>();
+
+                                            for (String poiName : allPoiName){
+                                                if (poiName.toLowerCase().contains(newText.toLowerCase())){
+                                                    filteredData.add(poiName);
+                                                }
+                                            }
+
+                                            Collections.sort(filteredData);
+                                            data.clear();
+                                            data.addAll(filteredData);
+                                        }
+
+                                        adapter.notifyDataSetChanged();
+
+                                        return false;
+                                    }
+                                });
                             }else{
-                                data.clear();
-                                adapter.notifyDataSetChanged();
+                                Toast.makeText(getActivity(), "Failed to retrieve visited POI history!!", Toast.LENGTH_SHORT).show();
                             }
-
-                            return false;
                         }
                     });
                 }else{
