@@ -154,24 +154,37 @@ public class AllPoiFragment extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
                             if (task.isSuccessful()){
+                                int highestCounter = 0;
+                                int highestPost = 0;
                                 int counter = 0;
                                 ArrayList<String> lastVisitedPOI = new ArrayList<>();
+                                ArrayList<Integer> visitedPoiCounter = new ArrayList<>();
                                 ArrayList<String> suggestedPOI = new ArrayList<>();
 
                                 for (DataSnapshot data: task.getResult().getChildren()){
-                                    lastVisitedPOI.add(data.getValue().toString());
+                                    if (lastVisitedPOI.contains(data.getValue().toString())){
+                                        int poiPost = lastVisitedPOI.indexOf(data.getValue().toString());
+                                        int poiCounter = visitedPoiCounter.get(poiPost) + 1;
+                                        visitedPoiCounter.set(poiPost, poiCounter);
+                                    }else{
+                                        lastVisitedPOI.add(data.getValue().toString());
+                                        visitedPoiCounter.add(1);
+                                    }
                                 }
 
-                                Collections.reverse(lastVisitedPOI);
-                                for (String visitedPOI: lastVisitedPOI){
-                                    if (counter >= 5){
-                                        break;
+                                while (counter < 5 && visitedPoiCounter.size() != 0){
+                                    for (int x = 0; x < visitedPoiCounter.size(); x++){
+                                        if (visitedPoiCounter.get(x) > highestCounter){
+                                            highestCounter = visitedPoiCounter.get(x);
+                                            highestPost = x;
+                                        }
                                     }
 
-                                    if (!suggestedPOI.contains(visitedPOI)){
-                                        suggestedPOI.add(visitedPOI);
-                                        counter++;
-                                    }
+                                    suggestedPOI.add(lastVisitedPOI.get(highestPost));
+                                    lastVisitedPOI.remove(highestPost);
+                                    visitedPoiCounter.remove(highestPost);
+                                    counter++;
+                                    highestCounter = 0;
                                 }
 
                                 String[] tempAllPoi = getResources().getStringArray(R.array.POIs);
