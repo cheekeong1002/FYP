@@ -54,6 +54,8 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
     private final ArrayList<Integer> favPoiCounter = new ArrayList<>();
     private final ArrayList<String[]> orderToDisplay = new ArrayList<>();
     private final ArrayList<String> labelNames = new ArrayList<>();
+    private int selectedItemPost;
+    private boolean savedStateExists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,20 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
         mBarChart = findViewById(R.id.favBarChart);
 
         getAllFavouritePOI();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("LastSelectedItemPost", selectedItemPost);
+        savedInstanceState.putBoolean("SavedStateExists", true);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        selectedItemPost = savedInstanceState.getInt("LastSelectedItemPost");
+        savedStateExists = savedInstanceState.getBoolean("SavedStateExists");
     }
 
     private void loadBarChartData(int totalFavToLoad){
@@ -173,7 +189,15 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 mBarChart.setVisibility(View.VISIBLE);
-                loadBarChartData(position + 1);
+
+                if (savedStateExists){
+                    mSpinner.setSelection(selectedItemPost - 1);
+                    loadBarChartData(selectedItemPost);
+                    savedStateExists = false;
+                }else{
+                    loadBarChartData(position + 1);
+                    selectedItemPost = position + 1;
+                }
             }
 
             @Override
