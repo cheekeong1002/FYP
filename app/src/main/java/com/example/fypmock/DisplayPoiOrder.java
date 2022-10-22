@@ -232,6 +232,18 @@ public class DisplayPoiOrder extends GetBuildingID {
         super.onResume();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (!locationManager.isRunning()){
+            return;
+        }
+
+        locationManager.removeUpdates(locationListener);
+        SitumSdk.locationManager().removeUpdates(locationListener);
+
+        super.onDestroy();
+    }
+
     private class DisplayPoiAdapter extends ArrayAdapter<String> {
         private int layout;
 
