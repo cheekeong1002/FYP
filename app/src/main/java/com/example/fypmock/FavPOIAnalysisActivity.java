@@ -196,6 +196,7 @@ public class FavPOIAnalysisActivity extends AppCompatActivity {
                     savedStateExists = false;
                 }else{
                     loadBarChartData(position + 1);
+                    loadBarChartData(position + 1);
                     selectedItemPost = position + 1;
                 }
             }

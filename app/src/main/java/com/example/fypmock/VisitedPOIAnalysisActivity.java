@@ -162,7 +162,6 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
             highestPOIPost = 0;
 
             String[] tempArray = {Float.toString(totalPoi), favPoiName};
-            Log.d("TAG", "countVisitedPoi: " + Arrays.toString(tempArray));
             orderToDisplay.add(tempArray);
         }
 
@@ -183,6 +182,7 @@ public class VisitedPOIAnalysisActivity extends AppCompatActivity {
                     loadBarChartData(selectedItemPost);
                     savedStateExists = false;
                 }else{
+                    loadBarChartData(position + 1);
                     loadBarChartData(position + 1);
                     selectedItemPost = position + 1;
                 }
