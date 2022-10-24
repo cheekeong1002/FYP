@@ -32,6 +32,7 @@ public class ModifyProfileActivity extends AppCompatActivity {
     String modificationArea, data;
     TextView mtv_title, mtv_newEmail, mtv_newPassword, mtv_rePassword;
     EditText met_input, met_email, met_password, met_newEmail, met_newPassword, met_rePassword;
+    Button saveChanges_btn, cancel_btn;
     ProgressBar mProgressBar;
 
     @Override
@@ -60,7 +61,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
         modificationArea = getIntent().getStringExtra("MODIFY_AREA");
         data = getIntent().getStringExtra("DATA");
 
-        Button saveChanges_btn = findViewById(R.id.btn_saveChanges);
+        cancel_btn = findViewById(R.id.btn_cancel);
+        saveChanges_btn = findViewById(R.id.btn_saveChanges);
         saveChanges_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,6 +170,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
+        saveChanges_btn.setEnabled(false);
+        cancel_btn.setEnabled(false);
 
         FirebaseUser user = mAuth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider.getCredential(email, password);
@@ -183,18 +187,24 @@ public class ModifyProfileActivity extends AppCompatActivity {
                                 Intent intent = new Intent();
                                 intent.putExtra("MODIFY_AREA", "Password");
                                 mProgressBar.setVisibility(View.GONE);
+                                saveChanges_btn.setEnabled(true);
+                                cancel_btn.setEnabled(true);
                                 finish();
                                 Toast.makeText(ModifyProfileActivity.this, modificationArea +
                                         " updated successfully!", Toast.LENGTH_LONG).show();
                             }else{
                                 Toast.makeText(ModifyProfileActivity.this, "Failed to update password!", Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
+                                saveChanges_btn.setEnabled(true);
+                                cancel_btn.setEnabled(true);
                             }
                         }
                     });
                 }else{
                     Toast.makeText(ModifyProfileActivity.this, "Failed to authenticate user! Try again!", Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.GONE);
+                    saveChanges_btn.setEnabled(true);
+                    cancel_btn.setEnabled(true);
                 }
             }
         });
@@ -248,6 +258,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
+        saveChanges_btn.setEnabled(false);
+        cancel_btn.setEnabled(false);
 
         FirebaseUser user = mAuth.getCurrentUser();
         AuthCredential credential = EmailAuthProvider.getCredential(email, password);
@@ -270,24 +282,32 @@ public class ModifyProfileActivity extends AppCompatActivity {
                                             intent.putExtra("MODIFY_AREA", "Email");
                                             intent.putExtra("DATA", newEmail);
                                             mProgressBar.setVisibility(View.GONE);
+                                            saveChanges_btn.setEnabled(true);
+                                            cancel_btn.setEnabled(true);
                                             finish();
                                             Toast.makeText(ModifyProfileActivity.this, modificationArea +
                                                     " updated successfully!", Toast.LENGTH_LONG).show();
                                         }else{
                                             Toast.makeText(ModifyProfileActivity.this, "Failed to update email!", Toast.LENGTH_LONG).show();
                                             mProgressBar.setVisibility(View.GONE);
+                                            saveChanges_btn.setEnabled(true);
+                                            cancel_btn.setEnabled(true);
                                         }
                                     }
                                 });
                             }else{
                                 Toast.makeText(ModifyProfileActivity.this, "Failed to update email!", Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.GONE);
+                                saveChanges_btn.setEnabled(true);
+                                cancel_btn.setEnabled(true);
                             }
                         }
                     });
                 }else{
                     Toast.makeText(ModifyProfileActivity.this, "Failed to authenticate user! Try again!", Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.GONE);
+                    saveChanges_btn.setEnabled(true);
+                    cancel_btn.setEnabled(true);
                 }
             }
         });
@@ -315,6 +335,8 @@ public class ModifyProfileActivity extends AppCompatActivity {
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
+        saveChanges_btn.setEnabled(false);
+        cancel_btn.setEnabled(false);
 
         mDatabase.getReference("Users")
                 .child(mAuth.getCurrentUser().getUid()).child("username")
@@ -326,12 +348,16 @@ public class ModifyProfileActivity extends AppCompatActivity {
                     intent.putExtra("MODIFY_AREA", "Username");
                     intent.putExtra("DATA", username);
                     mProgressBar.setVisibility(View.GONE);
+                    saveChanges_btn.setEnabled(true);
+                    cancel_btn.setEnabled(true);
                     finish();
                     Toast.makeText(ModifyProfileActivity.this, modificationArea +
                             " updated successfully!", Toast.LENGTH_LONG).show();
                 }else{
                     Toast.makeText(ModifyProfileActivity.this, "Failed to update " + modificationArea + "!", Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.GONE);
+                    saveChanges_btn.setEnabled(true);
+                    cancel_btn.setEnabled(true);
                 }
             }
         });
